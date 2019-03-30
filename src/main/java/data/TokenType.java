@@ -1,0 +1,23 @@
+package data;
+
+public enum TokenType {
+    NUMBER,
+    FUNCTION,
+    UNDEFINED,
+    IDENTIFIER,
+    ASSIGN_OPERATOR,
+    EQUALS_OPERATOR,
+    GREATER_EQUALS_OPERATOR,
+    LESS_EQUALS_OPERATOR,
+    AND,
+    OR,
+    COMMA,
+    SEMICOLON,
+    ADD_OPERATOR,
+    SUBSTRACT_OPERATOR,
+    MULTIPLY_OPERATOR,
+    DIVIDE_OPERATOR,
+    END,
+
+
+}
