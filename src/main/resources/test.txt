@@ -1,2 +1,2 @@
 //this is a comment
-x = -4;
+"hello \"\world\""

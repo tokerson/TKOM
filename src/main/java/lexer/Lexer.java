@@ -6,7 +6,6 @@ import data.TokenType;
 import data.Tokens;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class Lexer {
@@ -14,7 +13,7 @@ public class Lexer {
     private InputStreamReader inputStreamReader;
     private char current; //current character from stream
     private TextPosition textPosition;
-    private char EOL = 0; // end of line
+    private char EOF = 0; // end of file
 
     public Lexer(InputStreamReader inputStreamReader) {
         this.inputStreamReader = inputStreamReader;
@@ -22,14 +21,13 @@ public class Lexer {
     }
 
     private char getNextCharacter() throws Exception {
-        char nextCharacter = EOL;
+        char nextCharacter = EOF;
 
         try {
             if (inputStreamReader.ready()) {
                 nextCharacter = (char) inputStreamReader.read();
                 if (nextCharacter == '\n') {
                     this.textPosition.setToNextLine(); //we reached the end of line so we want to get a character from another line
-                    return getNextCharacter();
                 } else {
                     this.textPosition.incrementCharacterNumber();
                 }
@@ -44,9 +42,9 @@ public class Lexer {
 
     public Token getNextToken() throws Exception {
         StringBuilder stringBuilder = new StringBuilder();
-        Token token = null;
+        Token token;
 
-        if (current == ' ' || current == EOL) {
+        if (isWhiteCharacter(current)) {
             current = getNextCharacter();
 
             while (shouldReadAnotherCharacter()) {
@@ -54,7 +52,7 @@ public class Lexer {
             }
 
             //is still a whitespace after that while loop
-            if (current == ' ' || current == EOL) {
+            if (isWhiteCharacter(current)) {
                 return new Token(stringBuilder.toString(), TokenType.END);
             }
         }
@@ -74,7 +72,7 @@ public class Lexer {
             if (current == '/' && prev == '/') {
                 int line = textPosition.getLineNumber();
                 //skips to next line or finds the end of the file if current equals End of line
-                while (line == textPosition.getLineNumber() && current != EOL) {
+                while (line == textPosition.getLineNumber() && current != EOF) {
                     current = getNextCharacter();
                 }
                 return getNextToken();
@@ -86,11 +84,21 @@ public class Lexer {
         return token;
     }
 
+
     private Token getStringToken(StringBuilder stringBuilder) throws Exception {
 
-        while (current != '\"' && current != EOL) {
+        while (current != '\"' && current != EOF) {
             stringBuilder.append(current);
             current = getNextCharacter();
+            //checking if there is a \" inside a string. If yes then we have to append it to string and keep on getting new chars
+            if( current == '\\'){
+                stringBuilder.append(current);
+                current = getNextCharacter();
+                if( current == '\"'){
+                    stringBuilder.append(current);
+                    current = getNextCharacter();
+                }
+            }
         }
 
         if (current == '\"') {
@@ -157,8 +165,12 @@ public class Lexer {
         return new Token(stringBuilder.toString(), TokenType.INTEGER);
     }
 
-    private boolean shouldReadAnotherCharacter() throws IOException {
+    private Boolean shouldReadAnotherCharacter() throws IOException {
         return inputStreamReader.ready() && current == ' ';
+    }
+
+    private Boolean isWhiteCharacter(char c){
+        return c == ' ' || c == EOF || c == '\n';
     }
 
 }
