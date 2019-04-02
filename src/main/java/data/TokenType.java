@@ -36,7 +36,6 @@ public enum TokenType {
     INT_TYPE,
     ARRAY_OPEN,
     ARRAY_CLOSE,
-    QUOTE_SYMBOL,
-    BACKSLASH_SYMBOL,
+    STRING,
 //    COMMENT
 }

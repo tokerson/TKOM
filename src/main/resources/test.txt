@@ -1,1 +1,2 @@
-"  \\"something inside quotes"
+//this is a comment
+x = -4;

@@ -39,8 +39,6 @@ public class Tokens {
         put(":", PARAMETER_TYPE);
         put("[", ARRAY_OPEN);
         put("]", ARRAY_CLOSE);
-        put("\\\"", QUOTE_SYMBOL);
-        put("\\", BACKSLASH_SYMBOL);
     }};
 
 }

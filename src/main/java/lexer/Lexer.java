@@ -25,7 +25,7 @@ public class Lexer {
         char nextCharacter = EOL;
 
         try {
-            if(inputStreamReader.ready()) {
+            if (inputStreamReader.ready()) {
                 nextCharacter = (char) inputStreamReader.read();
                 if (nextCharacter == '\n') {
                     this.textPosition.setToNextLine(); //we reached the end of line so we want to get a character from another line
@@ -36,7 +36,7 @@ public class Lexer {
             }
         } catch (IOException e) {
             throw new Exception(String.format("[ERROR] Error while reading next character at line %d and char %d",
-                                                textPosition.getLineNumber(), textPosition.getCharacterNumber()));
+                    textPosition.getLineNumber(), textPosition.getCharacterNumber()));
         }
 
         return nextCharacter;
@@ -45,61 +45,77 @@ public class Lexer {
     public Token getNextToken() throws Exception {
         StringBuilder stringBuilder = new StringBuilder();
         Token token = null;
-        boolean haveToken;
 
-        do {
-            haveToken = true;
-            if (current == ' '|| current == EOL) {
-                current = getNextCharacter();
-
-                while (shouldReadAnotherCharacter()) {
-                    current = getNextCharacter();
-                }
-
-                //is still a whitespace after that while loop
-                if (current == ' ' || current == EOL) {
-                    return new Token(stringBuilder.toString(), TokenType.END);
-                }
-            }
-
-            stringBuilder.append(current);
-            char prev = current;
+        if (current == ' ' || current == EOL) {
             current = getNextCharacter();
 
-            if (Character.isDigit(prev)) {
-                token = getNumberToken(stringBuilder);
-            } else if (Character.isLetter(prev)) {
-                token = getAlphabeticToken(stringBuilder);
-            } else {
-                //this if checks whether it is a comment or not
-                if (current == '/' && prev == '/') {
-                    int line = textPosition.getLineNumber();
-                    //skips to next line or finds the end of the file if current equals End of line
-                    while (line == textPosition.getLineNumber() && current != EOL) current = getNextCharacter();
-                    stringBuilder = new StringBuilder();
-                    haveToken = false;
-                } else {
-                    token = getOperatorToken(stringBuilder);
-                }
+            while (shouldReadAnotherCharacter()) {
+                current = getNextCharacter();
             }
-        } while(!haveToken);
+
+            //is still a whitespace after that while loop
+            if (current == ' ' || current == EOL) {
+                return new Token(stringBuilder.toString(), TokenType.END);
+            }
+        }
+
+        stringBuilder.append(current);
+        char prev = current;
+        current = getNextCharacter();
+
+        if (Character.isDigit(prev)) {
+            token = getNumberToken(stringBuilder);
+        } else if (Character.isLetter(prev)) {
+            token = getAlphabeticToken(stringBuilder);
+        } else if (prev == '\"') {
+            token = getStringToken(stringBuilder);
+        } else {
+            //checks whether it is a comment or not
+            if (current == '/' && prev == '/') {
+                int line = textPosition.getLineNumber();
+                //skips to next line or finds the end of the file if current equals End of line
+                while (line == textPosition.getLineNumber() && current != EOL) {
+                    current = getNextCharacter();
+                }
+                return getNextToken();
+            } else {
+                token = getOperatorToken(stringBuilder);
+            }
+        }
 
         return token;
     }
 
-    private Token getOperatorToken(StringBuilder stringBuilder) throws Exception {
+    private Token getStringToken(StringBuilder stringBuilder) throws Exception {
 
-        if(Tokens.OPERATORS.containsKey(stringBuilder.toString() + current)) {
+        while (current != '\"' && current != EOL) {
             stringBuilder.append(current);
             current = getNextCharacter();
         }
 
+        if (current == '\"') {
+            stringBuilder.append(current);
+            current = getNextCharacter();
+
+            return new Token(stringBuilder.toString(), TokenType.STRING);
+        }
+
+        return new Token(stringBuilder.toString(), TokenType.UNDEFINED);
+    }
+
+    private Token getOperatorToken(StringBuilder stringBuilder) throws Exception {
+
+        if (Tokens.OPERATORS.containsKey(stringBuilder.toString() + current)) {
+            stringBuilder.append(current);
+            current = getNextCharacter();
+        }
+
+
         final TokenType tokenType = Tokens.OPERATORS.get(stringBuilder.toString());
 
-        if(tokenType != null) {
+        if (tokenType != null) {
             return new Token(stringBuilder.toString(), tokenType);
-        }
-        else if(!inputStreamReader.ready()){
+        } else if (!inputStreamReader.ready()) {
             return new Token(stringBuilder.toString(), TokenType.END);
         }
 
@@ -110,30 +126,30 @@ public class Lexer {
 
     private Token getAlphabeticToken(StringBuilder stringBuilder) throws Exception {
 
-        while( Character.isLetterOrDigit( current )){
+        while (Character.isLetterOrDigit(current)) {
             stringBuilder.append(current);
             current = getNextCharacter();
         }
 
-        if(Tokens.KEYWORDS.containsKey(stringBuilder.toString())){
+        if (Tokens.KEYWORDS.containsKey(stringBuilder.toString())) {
             return new Token(stringBuilder.toString(), Tokens.KEYWORDS.get(stringBuilder.toString()));
         }
 
-        return new Token(stringBuilder.toString(), TokenType.IDENTIFIER );
+        return new Token(stringBuilder.toString(), TokenType.IDENTIFIER);
     }
 
     private Token getNumberToken(StringBuilder stringBuilder) throws Exception {
 
-        while(Character.isDigit(current)){
+        while (Character.isDigit(current)) {
             stringBuilder.append(current);
             current = getNextCharacter();
         }
 
-        if(current == '.') {
+        if (current == '.') {
             do {
                 stringBuilder.append(current);
                 current = getNextCharacter();
-            } while(Character.isDigit(current));
+            } while (Character.isDigit(current));
 
             return new Token(stringBuilder.toString(), TokenType.DOUBLE);
         }
