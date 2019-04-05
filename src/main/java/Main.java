@@ -10,7 +10,7 @@ public class Main {
         InputStreamReader inputStreamReader = null;
         try {
             inputStreamReader = new InputStreamReader(
-                    new FileInputStream( new File("src/main/resources/test.txt"))
+                    new FileInputStream( new File("src/main/resources/sample-code.txt"))
             );
 
         } catch (FileNotFoundException e) {
@@ -19,8 +19,8 @@ public class Main {
 
         Lexer lexer = new Lexer(inputStreamReader);
 
-        Token token = null;
-        token = lexer.getNextToken();
+
+        Token token = lexer.getNextToken();
         while(token.getTokenType() != TokenType.END ) {
             System.out.println(token.getContent().concat(" "+token.getTokenType().toString()));
             token = lexer.getNextToken();

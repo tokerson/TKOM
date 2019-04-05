@@ -36,7 +36,7 @@ def Int multAllElements(array: Array[Int]){
 
 def void printArray(array: Array[Int]){
     if(length(array) > 0) {
-        print(head(array), " \\" ");
+        print(head(array), " \" ");
         printArray(tail(array));
     }
 }

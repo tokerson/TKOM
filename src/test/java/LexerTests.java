@@ -132,10 +132,23 @@ public class LexerTests {
     public void isReturningStringWithBackslashesInside() {
         String text = "\"hello \\world\\\\\"";
         Token token = getTokenFromString(text);
-        System.out.println(text);
-        System.out.println(token.getContent());
         assertEquals("token's content should be \"hello \\world\\\\\"", "\"hello \\world\\\\\"", token.getContent());
         assertEquals("token's type should be STRING", TokenType.STRING, token.getTokenType());
+    }
+
+    @Test
+    public void isReturningEndTokenWhenTheFileIsEmpty() {
+        String text = "";
+        Token token = getTokenFromString(text);
+        assertEquals("token's type should be END", TokenType.END, token.getTokenType());
+    }
+
+    @Test
+    public void isReturningEndTokenWhenTheFileIsFullOfNewLines() {
+        String text = "\n\n\n";
+        Token token = getTokenFromString(text);
+        assertEquals("token's content should be \"\"", "", token.getContent());
+        assertEquals("token's type should be END", TokenType.END, token.getTokenType());
     }
 
 

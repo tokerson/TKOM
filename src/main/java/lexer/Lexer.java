@@ -52,7 +52,7 @@ public class Lexer {
             }
 
             //is still a whitespace after that while loop
-            if (isWhiteCharacter(current)) {
+            if (current == 0) {
                 return new Token(stringBuilder.toString(), TokenType.END);
             }
         }
@@ -68,6 +68,10 @@ public class Lexer {
         } else if (prev == '\"') {
             token = getStringToken(stringBuilder);
         } else {
+
+            if (prev == '\n') {
+                return getNextToken();
+            }
             //checks whether it is a comment or not
             if (current == '/' && prev == '/') {
                 int line = textPosition.getLineNumber();
@@ -127,6 +131,7 @@ public class Lexer {
             return new Token(stringBuilder.toString(), TokenType.END);
         }
 
+        System.out.println(stringBuilder.toString());
         return new Token(stringBuilder.toString(), TokenType.UNDEFINED);
 
     }
