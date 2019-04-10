@@ -37,5 +37,4 @@ public enum TokenType {
     ARRAY_OPEN,
     ARRAY_CLOSE,
     STRING,
-//    COMMENT
 }

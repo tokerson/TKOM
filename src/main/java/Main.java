@@ -1,12 +1,13 @@
 import data.TokenType;
 import lexer.Lexer;
 import data.Token;
+import lexer.LexerException;
 
 import java.io.*;
 
 public class Main {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         InputStreamReader inputStreamReader = null;
         try {
             inputStreamReader = new InputStreamReader(
@@ -18,13 +19,22 @@ public class Main {
         }
 
         Lexer lexer = new Lexer(inputStreamReader);
-
-
-        Token token = lexer.getNextToken();
-        while(token.getTokenType() != TokenType.END ) {
-            System.out.println(token.getContent().concat(" "+token.getTokenType().toString()));
+        Token token = null;
+        try {
             token = lexer.getNextToken();
+            while(token.getTokenType() != TokenType.END ) {
+                System.out.println(token.getContent().concat(" " + token.getTokenType().toString()));
+                token = lexer.getNextToken();
+            }
+            System.out.println(token.getContent().concat(" " + token.getTokenType().toString()));
+
+        } catch (LexerException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        System.out.println(token.getContent().concat(" "+token.getTokenType().toString()));
+
+
     }
 }

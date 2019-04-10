@@ -1,2 +1,4 @@
 //this is a comment
-"hello \"\world\""
+def x = 4;
+$
+

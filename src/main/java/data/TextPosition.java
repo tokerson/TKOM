@@ -8,7 +8,7 @@ public class TextPosition {
         this(1,1);
     }
 
-    public TextPosition(int lineNumber, int characterNumber) {
+    private TextPosition(int lineNumber, int characterNumber) {
         this.lineNumber = lineNumber;
         this.characterNumber = characterNumber;
     }
@@ -22,14 +22,6 @@ public class TextPosition {
         this.characterNumber = 1;
     }
 
-    public void setLineNumber(int lineNumber) {
-        this.lineNumber = lineNumber;
-    }
-
-    public void incrementLineNumber() {
-        this.lineNumber++;
-    }
-
     public void incrementCharacterNumber(){
         this.characterNumber++;
     }
@@ -38,7 +30,4 @@ public class TextPosition {
         return characterNumber;
     }
 
-    public void setCharacterNumber(int characterNumber) {
-        this.characterNumber = characterNumber;
-    }
 }

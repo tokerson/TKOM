@@ -1,8 +1,6 @@
 import data.Token;
 import data.TokenType;
-import data.Tokens;
 import lexer.Lexer;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -12,15 +10,6 @@ import static org.junit.Assert.assertEquals;
 
 
 public class LexerTests {
-
-    private Lexer lexer;
-    private InputStreamReader inputStreamReader;
-
-
-    @Before
-    public void before() {
-        System.out.println("Setting up tests");
-    }
 
     @Test
     public void isRecognizingIdentifier() {
@@ -36,7 +25,6 @@ public class LexerTests {
         Token token = getTokenFromString(text);
         assertEquals("token's content should be + ", "+", token.getContent());
         assertEquals("token's type should be ADD_OPERATOR", TokenType.ADD_OPERATOR, token.getTokenType());
-//        assertEquals(Tokens.OPERATORS.get().toString(), token.getTokenType().toString());
     }
 
     @Test
@@ -45,7 +33,6 @@ public class LexerTests {
         Token token = getTokenFromString(text);
         assertEquals("token's content should be 123", "123", token.getContent());
         assertEquals("token's type should be INTEGER", TokenType.INTEGER, token.getTokenType());
-//        assertEquals(Tokens.OPERATORS.get().toString(), token.getTokenType().toString());
     }
 
     @Test
@@ -54,9 +41,7 @@ public class LexerTests {
         Token token = getTokenFromString(text);
         assertEquals("token's content should be 123.4", "123.4", token.getContent());
         assertEquals("token's type should be DOUBLE", TokenType.DOUBLE, token.getTokenType());
-//        assertEquals(Tokens.OPERATORS.get().toString(), token.getTokenType().toString());
     }
-
 
     @Test
     public void isRecognizingIdentifierFollowedAndBegginingWithWhiteSpaces() {
@@ -124,7 +109,7 @@ public class LexerTests {
     public void isReturningStringWithQuotesInside() {
         String text = "\"hello \\\"world\\\"\"";
         Token token = getTokenFromString(text);
-        assertEquals("token's content should be \"hello \\\"world\\\"\"", "\"hello \\\"world\\\"\"", token.getContent());
+        assertEquals("token's content should be \"hello \\\"world\\\"\"", "hello \"world\"", token.getContent());
         assertEquals("token's type should be STRING", TokenType.STRING, token.getTokenType());
     }
 
@@ -153,7 +138,7 @@ public class LexerTests {
 
 
     private Token getTokenFromString(String string) {
-        lexer = new Lexer(convertStringToInputStreamReader(string));
+        Lexer lexer = new Lexer(convertStringToInputStreamReader(string));
         try {
             return lexer.getNextToken();
         } catch (Exception e) {

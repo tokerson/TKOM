@@ -2,12 +2,15 @@ def Int sum(a: Int, b:Int){
     return a + b;
 }
 
+d = -2;
+
+
 c = sum(1,2) - 4;
 
 if( sum(4,2) > c) {
     //statement;
 }
-else if ( condition ) {
+else if ( 4 > 2 && 2 < 3 ) {
     //statement;
 }
 else {

@@ -13,14 +13,14 @@ public class Lexer {
     private InputStreamReader inputStreamReader;
     private char current; //current character from stream
     private TextPosition textPosition;
-    private char EOF = 0; // end of file
+    private final char EOF = 0; // end of file
 
     public Lexer(InputStreamReader inputStreamReader) {
         this.inputStreamReader = inputStreamReader;
         this.textPosition = new TextPosition();
     }
 
-    private char getNextCharacter() throws Exception {
+    private char getNextCharacter() throws Exception{
         char nextCharacter = EOF;
 
         try {
@@ -33,8 +33,7 @@ public class Lexer {
                 }
             }
         } catch (IOException e) {
-            throw new Exception(String.format("[ERROR] Error while reading next character at line %d and char %d",
-                    textPosition.getLineNumber(), textPosition.getCharacterNumber()));
+            throw new LexerException(textPosition);
         }
 
         return nextCharacter;
@@ -52,8 +51,8 @@ public class Lexer {
             }
 
             //is still a whitespace after that while loop
-            if (current == 0) {
-                return new Token(stringBuilder.toString(), TokenType.END);
+            if (current == EOF) {
+                return new Token(stringBuilder.toString(), TokenType.END, textPosition);
             }
         }
 
@@ -109,10 +108,11 @@ public class Lexer {
             stringBuilder.append(current);
             current = getNextCharacter();
 
-            return new Token(stringBuilder.toString(), TokenType.STRING);
+            return new Token(stringBuilder.toString(), TokenType.STRING, textPosition);
         }
 
-        return new Token(stringBuilder.toString(), TokenType.UNDEFINED);
+        throw new LexerException(textPosition);
+//        return new Token(stringBuilder.toString(), TokenType.UNDEFINED);
     }
 
     private Token getOperatorToken(StringBuilder stringBuilder) throws Exception {
@@ -126,13 +126,14 @@ public class Lexer {
         final TokenType tokenType = Tokens.OPERATORS.get(stringBuilder.toString());
 
         if (tokenType != null) {
-            return new Token(stringBuilder.toString(), tokenType);
+            return new Token(stringBuilder.toString(), tokenType, textPosition);
         } else if (!inputStreamReader.ready()) {
-            return new Token(stringBuilder.toString(), TokenType.END);
+            return new Token(stringBuilder.toString(), TokenType.END, textPosition);
         }
 
         System.out.println(stringBuilder.toString());
-        return new Token(stringBuilder.toString(), TokenType.UNDEFINED);
+        throw new LexerException(textPosition);
+//        return new Token(stringBuilder.toString(), TokenType.UNDEFINED);
 
     }
 
@@ -145,10 +146,10 @@ public class Lexer {
         }
 
         if (Tokens.KEYWORDS.containsKey(stringBuilder.toString())) {
-            return new Token(stringBuilder.toString(), Tokens.KEYWORDS.get(stringBuilder.toString()));
+            return new Token(stringBuilder.toString(), Tokens.KEYWORDS.get(stringBuilder.toString()), textPosition);
         }
 
-        return new Token(stringBuilder.toString(), TokenType.IDENTIFIER);
+        return new Token(stringBuilder.toString(), TokenType.IDENTIFIER, textPosition);
     }
 
     private Token getNumberToken(StringBuilder stringBuilder) throws Exception {
@@ -164,10 +165,10 @@ public class Lexer {
                 current = getNextCharacter();
             } while (Character.isDigit(current));
 
-            return new Token(stringBuilder.toString(), TokenType.DOUBLE);
+            return new Token(stringBuilder.toString(), TokenType.DOUBLE, textPosition);
         }
 
-        return new Token(stringBuilder.toString(), TokenType.INTEGER);
+        return new Token(stringBuilder.toString(), TokenType.INTEGER, textPosition);
     }
 
     private Boolean shouldReadAnotherCharacter() throws IOException {
