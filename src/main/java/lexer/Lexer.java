@@ -5,6 +5,7 @@ import data.Token;
 import data.TokenType;
 import data.Tokens;
 
+import javax.xml.soap.Text;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -54,23 +55,23 @@ public class Lexer {
             }
         }
 
+        TextPosition tokenPosition = textPosition.clone();
+
         if (Character.isDigit(current)) {
-            return getNumberToken(stringBuilder);
+            return getNumberToken(stringBuilder, tokenPosition);
         } else if (Character.isLetter(current)) {
-            return getAlphabeticToken(stringBuilder);
+            return getAlphabeticToken(stringBuilder, tokenPosition);
         } else if (current == '\"') {
-            return getStringToken(stringBuilder);
+            return getStringToken(stringBuilder, tokenPosition);
         } else if (current == '\n') {
             return getNextToken();
         } else {
-            return getOperatorToken(stringBuilder);
+            return getOperatorToken(stringBuilder, tokenPosition);
         }
     }
 
 
-    private Token getStringToken(StringBuilder stringBuilder) throws Exception {
-
-        TextPosition tokenPosition;
+    private Token getStringToken(StringBuilder stringBuilder, TextPosition tokenPosition) throws Exception {
 
         do {
             stringBuilder.append(current);
@@ -86,8 +87,6 @@ public class Lexer {
             }
         } while (current != '\"' && current != EOF);
 
-        tokenPosition = textPosition.clone();
-
         if (current == '\"') {
             stringBuilder.append(current);
             current = getNextCharacter();
@@ -98,15 +97,12 @@ public class Lexer {
         throw new LexerException(tokenPosition);
     }
 
-    private Token getOperatorToken(StringBuilder stringBuilder) throws Exception {
-
-        TextPosition tokenPosition = textPosition.clone();
+    private Token getOperatorToken(StringBuilder stringBuilder, TextPosition tokenPosition) throws Exception {
         stringBuilder.append(current);
         current = getNextCharacter();
 
         if (Tokens.OPERATORS.containsKey(stringBuilder.toString() + current)) {
             stringBuilder.append(current);
-            tokenPosition = textPosition.clone();
             current = getNextCharacter();
         } else if ((stringBuilder.toString() + current).equals("//")) {
             int line = textPosition.getLineNumber();
@@ -129,12 +125,9 @@ public class Lexer {
     }
 
 
-    private Token getAlphabeticToken(StringBuilder stringBuilder) throws Exception {
-
-        TextPosition tokenPosition;
+    private Token getAlphabeticToken(StringBuilder stringBuilder, TextPosition tokenPosition) throws Exception {
 
         do {
-            tokenPosition = textPosition.clone();
             stringBuilder.append(current);
             current = getNextCharacter();
         } while (Character.isLetterOrDigit(current));
@@ -146,19 +139,15 @@ public class Lexer {
         return new Token(stringBuilder.toString(), TokenType.IDENTIFIER, tokenPosition);
     }
 
-    private Token getNumberToken(StringBuilder stringBuilder) throws Exception {
-
-        TextPosition tokenPosition;
+    private Token getNumberToken(StringBuilder stringBuilder, TextPosition tokenPosition) throws Exception {
 
         do {
-            tokenPosition = textPosition.clone();
             stringBuilder.append(current);
             current = getNextCharacter();
         } while (Character.isDigit(current));
 
         if (current == '.') {
             do {
-                tokenPosition = textPosition.clone();
                 stringBuilder.append(current);
                 current = getNextCharacter();
             } while (Character.isDigit(current));
