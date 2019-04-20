@@ -1,6 +1,7 @@
 import data.Token;
 import data.TokenType;
 import lexer.Lexer;
+import lexer.LexerException;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -12,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 public class LexerTests {
 
     @Test
-    public void isRecognizingIdentifier() {
+    public void isRecognizingIdentifier() throws Exception {
         String text = "x";
         Token token = getTokenFromString(text);
         assertEquals("token's content should be x", "x", token.getContent());
@@ -20,7 +21,7 @@ public class LexerTests {
     }
 
     @Test
-    public void isRecognizingAddOperator() {
+    public void isRecognizingAddOperator() throws Exception {
         String text = "+";
         Token token = getTokenFromString(text);
         assertEquals("token's content should be + ", "+", token.getContent());
@@ -28,7 +29,7 @@ public class LexerTests {
     }
 
     @Test
-    public void isRecognizingInteger() {
+    public void isRecognizingInteger() throws Exception {
         String text = "123";
         Token token = getTokenFromString(text);
         assertEquals("token's content should be 123", "123", token.getContent());
@@ -36,7 +37,7 @@ public class LexerTests {
     }
 
     @Test
-    public void isRecognizingDouble() {
+    public void isRecognizingDouble() throws Exception {
         String text = "123.4";
         Token token = getTokenFromString(text);
         assertEquals("token's content should be 123.4", "123.4", token.getContent());
@@ -44,7 +45,7 @@ public class LexerTests {
     }
 
     @Test
-    public void isRecognizingIdentifierFollowedAndBegginingWithWhiteSpaces() {
+    public void isRecognizingIdentifierFollowedAndBegginingWithWhiteSpaces() throws Exception {
         String text = "   x   ";
         Token token = getTokenFromString(text);
         assertEquals("token's content should be x", "x", token.getContent());
@@ -52,7 +53,7 @@ public class LexerTests {
     }
 
     @Test
-    public void isRecognizingIntegerFollowedAndBegginingWithWhiteSpaces() {
+    public void isRecognizingIntegerFollowedAndBegginingWithWhiteSpaces() throws Exception {
         String text = "   123  ";
         Token token = getTokenFromString(text);
         assertEquals("token's content should be 123", "123", token.getContent());
@@ -60,7 +61,7 @@ public class LexerTests {
     }
 
     @Test
-    public void isNotRecognizingDoubleFollowedAndBegginingWithWhiteSpaces() {
+    public void isNotRecognizingDoubleFollowedAndBegginingWithWhiteSpaces() throws Exception {
         String text = "   123. 4  ";
         Token token = getTokenFromString(text);
         assertEquals("token's content should be 123.", "123.", token.getContent());
@@ -68,14 +69,14 @@ public class LexerTests {
     }
 
     @Test
-    public void isIgnoringComments() {
+    public void isIgnoringComments() throws Exception {
         String text = "//comment  ";
         Token token = getTokenFromString(text);
         assertEquals("There should be no token", TokenType.END, token.getTokenType());
     }
 
     @Test
-    public void isIdentifiyingTokenInNextLineAfterComment() {
+    public void isIdentifiyingTokenInNextLineAfterComment() throws Exception {
         String text = "//comment  \ndef";
         Token token = getTokenFromString(text);
         assertEquals("token's content should be def", "def", token.getContent());
@@ -83,22 +84,21 @@ public class LexerTests {
     }
 
     @Test
-    public void isIdentifiyingStrings() {
+    public void isIdentifiyingStrings() throws Exception {
         String text = "\"hello world\"";
         Token token = getTokenFromString(text);
         assertEquals("token's content should be \"hello world\"", "\"hello world\"", token.getContent());
         assertEquals("token's type should be STRING", TokenType.STRING, token.getTokenType());
     }
 
-    @Test
-    public void isReturningUndefinedWhenStringIsNotClosed() {
+    @Test(expected = LexerException.class)
+    public void isReturningUndefinedWhenStringIsNotClosed() throws Exception {
         String text = "\"hello world";
         Token token = getTokenFromString(text);
-        assertEquals("token's type should be UNDEFINED", TokenType.UNDEFINED, token.getTokenType());
     }
 
     @Test
-    public void isReturningProperMulitLineString() {
+    public void isReturningProperMulitLineString() throws Exception {
         String text = "\"hello \n\n world\"";
         Token token = getTokenFromString(text);
         assertEquals("token's content should be \"hello \n\n world\"", "\"hello \n\n world\"", token.getContent());
@@ -106,7 +106,7 @@ public class LexerTests {
     }
 
     @Test
-    public void isReturningStringWithQuotesInside() {
+    public void isReturningStringWithQuotesInside() throws Exception {
         String text = "\"hello \\\"world\\\"\"";
         Token token = getTokenFromString(text);
         assertEquals("token's content should be \"hello \\\"world\\\"\"", "hello \"world\"", token.getContent());
@@ -114,7 +114,7 @@ public class LexerTests {
     }
 
     @Test
-    public void isReturningStringWithBackslashesInside() {
+    public void isReturningStringWithBackslashesInside() throws Exception {
         String text = "\"hello \\world\\\\\"";
         Token token = getTokenFromString(text);
         assertEquals("token's content should be \"hello \\world\\\\\"", "\"hello \\world\\\\\"", token.getContent());
@@ -122,14 +122,14 @@ public class LexerTests {
     }
 
     @Test
-    public void isReturningEndTokenWhenTheFileIsEmpty() {
+    public void isReturningEndTokenWhenTheFileIsEmpty() throws Exception {
         String text = "";
         Token token = getTokenFromString(text);
         assertEquals("token's type should be END", TokenType.END, token.getTokenType());
     }
 
     @Test
-    public void isReturningEndTokenWhenTheFileIsFullOfNewLines() {
+    public void isReturningEndTokenWhenTheFileIsFullOfNewLines() throws Exception {
         String text = "\n\n\n";
         Token token = getTokenFromString(text);
         assertEquals("token's content should be \"\"", "", token.getContent());
@@ -137,15 +137,9 @@ public class LexerTests {
     }
 
 
-    private Token getTokenFromString(String string) {
+    private Token getTokenFromString(String string) throws Exception {
         Lexer lexer = new Lexer(convertStringToInputStreamReader(string));
-        try {
-            return lexer.getNextToken();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return lexer.getNextToken();
     }
 
     private InputStreamReader convertStringToInputStreamReader(String string) {

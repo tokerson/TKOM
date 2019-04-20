@@ -23,7 +23,7 @@ public class Main {
         try {
             token = lexer.getNextToken();
             while(token.getTokenType() != TokenType.END ) {
-                System.out.println(token.getContent().concat(" " + token.getTokenType().toString()));
+                System.out.println(token.getContent().concat(" " + token.getTokenType().toString() + " line: " + token.getTextPosition().getLineNumber() + " char: " + token.getTextPosition().getCharacterNumber()));
                 token = lexer.getNextToken();
             }
             System.out.println(token.getContent().concat(" " + token.getTokenType().toString()));

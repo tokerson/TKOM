@@ -1,4 +1,4 @@
 //this is a comment
-def x = 4;
-$
+def $ = 4;
+
 

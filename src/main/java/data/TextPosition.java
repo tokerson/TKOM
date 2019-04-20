@@ -1,11 +1,11 @@
 package data;
 
-public class TextPosition {
+public class TextPosition implements Cloneable {
     private int lineNumber;
     private int characterNumber;
 
     public TextPosition() {
-        this(1,1);
+        this(1,0);
     }
 
     private TextPosition(int lineNumber, int characterNumber) {
@@ -19,7 +19,7 @@ public class TextPosition {
 
     public void setToNextLine(){
         this.lineNumber++;
-        this.characterNumber = 1;
+        this.characterNumber = 0;
     }
 
     public void incrementCharacterNumber(){
@@ -30,4 +30,8 @@ public class TextPosition {
         return characterNumber;
     }
 
+    @Override
+    public TextPosition clone() throws CloneNotSupportedException {
+        return (TextPosition) super.clone();
+    }
 }

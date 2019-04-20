@@ -20,7 +20,7 @@ public class Lexer {
         this.textPosition = new TextPosition();
     }
 
-    private char getNextCharacter() throws Exception{
+    private char getNextCharacter() throws Exception {
         char nextCharacter = EOF;
 
         try {
@@ -41,7 +41,6 @@ public class Lexer {
 
     public Token getNextToken() throws Exception {
         StringBuilder stringBuilder = new StringBuilder();
-        Token token;
 
         if (isWhiteCharacter(current)) {
             current = getNextCharacter();
@@ -49,133 +48,132 @@ public class Lexer {
             while (shouldReadAnotherCharacter()) {
                 current = getNextCharacter();
             }
-
             //is still a whitespace after that while loop
             if (current == EOF) {
                 return new Token(stringBuilder.toString(), TokenType.END, textPosition);
             }
         }
 
-        stringBuilder.append(current);
-        char prev = current;
-        current = getNextCharacter();
-
-        if (Character.isDigit(prev)) {
-            token = getNumberToken(stringBuilder);
-        } else if (Character.isLetter(prev)) {
-            token = getAlphabeticToken(stringBuilder);
-        } else if (prev == '\"') {
-            token = getStringToken(stringBuilder);
+        if (Character.isDigit(current)) {
+            return getNumberToken(stringBuilder);
+        } else if (Character.isLetter(current)) {
+            return getAlphabeticToken(stringBuilder);
+        } else if (current == '\"') {
+            return getStringToken(stringBuilder);
+        } else if (current == '\n') {
+            return getNextToken();
         } else {
-
-            if (prev == '\n') {
-                return getNextToken();
-            }
-            //checks whether it is a comment or not
-            if (current == '/' && prev == '/') {
-                int line = textPosition.getLineNumber();
-                //skips to next line or finds the end of the file if current equals End of line
-                while (line == textPosition.getLineNumber() && current != EOF) {
-                    current = getNextCharacter();
-                }
-                return getNextToken();
-            } else {
-                token = getOperatorToken(stringBuilder);
-            }
+            return getOperatorToken(stringBuilder);
         }
-
-        return token;
     }
 
 
     private Token getStringToken(StringBuilder stringBuilder) throws Exception {
 
-        while (current != '\"' && current != EOF) {
+        TextPosition tokenPosition;
+
+        do {
             stringBuilder.append(current);
             current = getNextCharacter();
             //checking if there is a \" inside a string. If yes then we have to append it to string and keep on getting new chars
-            if( current == '\\'){
+            if (current == '\\') {
                 stringBuilder.append(current);
                 current = getNextCharacter();
-                if( current == '\"'){
+                if (current == '\"') {
                     stringBuilder.append(current);
                     current = getNextCharacter();
                 }
             }
-        }
+        } while (current != '\"' && current != EOF);
+
+        tokenPosition = textPosition.clone();
 
         if (current == '\"') {
             stringBuilder.append(current);
             current = getNextCharacter();
 
-            return new Token(stringBuilder.toString(), TokenType.STRING, textPosition);
+            return new Token(stringBuilder.toString(), TokenType.STRING, tokenPosition);
         }
 
-        throw new LexerException(textPosition);
-//        return new Token(stringBuilder.toString(), TokenType.UNDEFINED);
+        throw new LexerException(tokenPosition);
     }
 
     private Token getOperatorToken(StringBuilder stringBuilder) throws Exception {
 
+        TextPosition tokenPosition = textPosition.clone();
+        stringBuilder.append(current);
+        current = getNextCharacter();
+
         if (Tokens.OPERATORS.containsKey(stringBuilder.toString() + current)) {
             stringBuilder.append(current);
+            tokenPosition = textPosition.clone();
             current = getNextCharacter();
+        } else if ((stringBuilder.toString() + current).equals("//")) {
+            int line = textPosition.getLineNumber();
+            //skips to next line or finds the end of the file if current equals End of line
+            while (line == textPosition.getLineNumber() && current != EOF) {
+                current = getNextCharacter();
+            }
+            return getNextToken();
         }
-
 
         final TokenType tokenType = Tokens.OPERATORS.get(stringBuilder.toString());
 
         if (tokenType != null) {
-            return new Token(stringBuilder.toString(), tokenType, textPosition);
+            return new Token(stringBuilder.toString(), tokenType, tokenPosition);
         } else if (!inputStreamReader.ready()) {
-            return new Token(stringBuilder.toString(), TokenType.END, textPosition);
+            return new Token(stringBuilder.toString(), TokenType.END, tokenPosition);
         }
 
-        System.out.println(stringBuilder.toString());
-        throw new LexerException(textPosition);
-//        return new Token(stringBuilder.toString(), TokenType.UNDEFINED);
-
+        throw new LexerException(tokenPosition);
     }
 
 
     private Token getAlphabeticToken(StringBuilder stringBuilder) throws Exception {
 
-        while (Character.isLetterOrDigit(current)) {
+        TextPosition tokenPosition;
+
+        do {
+            tokenPosition = textPosition.clone();
             stringBuilder.append(current);
             current = getNextCharacter();
-        }
+        } while (Character.isLetterOrDigit(current));
 
         if (Tokens.KEYWORDS.containsKey(stringBuilder.toString())) {
-            return new Token(stringBuilder.toString(), Tokens.KEYWORDS.get(stringBuilder.toString()), textPosition);
+            return new Token(stringBuilder.toString(), Tokens.KEYWORDS.get(stringBuilder.toString()), tokenPosition);
         }
 
-        return new Token(stringBuilder.toString(), TokenType.IDENTIFIER, textPosition);
+        return new Token(stringBuilder.toString(), TokenType.IDENTIFIER, tokenPosition);
     }
 
     private Token getNumberToken(StringBuilder stringBuilder) throws Exception {
 
-        while (Character.isDigit(current)) {
+        TextPosition tokenPosition;
+
+        do {
+            tokenPosition = textPosition.clone();
             stringBuilder.append(current);
             current = getNextCharacter();
-        }
+        } while (Character.isDigit(current));
 
         if (current == '.') {
             do {
+                tokenPosition = textPosition.clone();
                 stringBuilder.append(current);
                 current = getNextCharacter();
             } while (Character.isDigit(current));
 
-            return new Token(stringBuilder.toString(), TokenType.DOUBLE, textPosition);
+            return new Token(stringBuilder.toString(), TokenType.DOUBLE, tokenPosition);
         }
 
-        return new Token(stringBuilder.toString(), TokenType.INTEGER, textPosition);
+        return new Token(stringBuilder.toString(), TokenType.INTEGER, tokenPosition);
     }
 
     private Boolean shouldReadAnotherCharacter() throws IOException {
         return inputStreamReader.ready() && current == ' ';
     }
 
-    private Boolean isWhiteCharacter(char c){
+    private Boolean isWhiteCharacter(char c) {
         return c == ' ' || c == EOF || c == '\n';
     }
 
