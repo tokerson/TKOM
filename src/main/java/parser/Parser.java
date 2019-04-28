@@ -109,10 +109,9 @@ public class Parser {
                 expression.addOperand(parsePrimaryExpression());
                 break;
             case SEMICOLON:
-                accept(TokenType.SEMICOLON);
                 break;
             default:
-                throw new ParserException(token, new TokenType[]{TokenType.MULTIPLY_OPERATOR, TokenType.DIVIDE_OPERATOR, TokenType.SEMICOLON});
+                throw new ParserException(token, new TokenType[]{TokenType.MULTIPLY_OPERATOR, TokenType.DIVIDE_OPERATOR});
         }
 
         return expression;

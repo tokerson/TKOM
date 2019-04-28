@@ -4,3 +4,5 @@ def x;
 def y;
 
 def x = 4;
+
+def y = 2;
