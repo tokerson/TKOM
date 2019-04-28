@@ -24,5 +24,5 @@ public abstract class Node {
 
     public abstract Type getType();
 
-
+    public abstract String toString();
 }

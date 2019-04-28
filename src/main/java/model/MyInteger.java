@@ -22,4 +22,9 @@ public class MyInteger extends Node {
     public Type getType() {
         return Type.Integer;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

@@ -119,7 +119,7 @@ public class Parser {
     }
 
     private Node parsePrimaryExpression() throws Exception {
-        Expression expression = null;
+        Expression expression;
 
         switch (token.getTokenType()) {
             case PARENTHESIS_OPEN:
@@ -140,7 +140,7 @@ public class Parser {
         switch (token.getTokenType()) {
             case SUBSTRACT_OPERATOR:
                 accept(TokenType.SUBSTRACT_OPERATOR);
-                parseNumber(-1);
+                return parseNumber(-1);
             case ADD_OPERATOR:
                 accept(TokenType.ADD_OPERATOR);
                 return parseNumber(1);
@@ -154,16 +154,16 @@ public class Parser {
         }
     }
 
-    private Node parseNumber(int negative) throws Exception {
+    private Node parseNumber(int sign) throws Exception {
         switch (token.getTokenType()) {
             case INTEGER:
                 int intVal = Integer.parseInt(token.getContent());
                 accept(TokenType.INTEGER);
-                return new MyInteger(intVal * negative);
+                return new MyInteger(intVal * sign);
             case DOUBLE:
                 double doubleVal= Double.parseDouble(token.getContent());
                 accept(TokenType.DOUBLE);
-                return new MyDouble(doubleVal * negative);
+                return new MyDouble(doubleVal * sign);
             default:
                 throw new ParserException(token, new TokenType[]{TokenType.INTEGER, TokenType.DOUBLE});
         }

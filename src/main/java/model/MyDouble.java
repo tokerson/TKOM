@@ -20,4 +20,9 @@ public class MyDouble extends Node {
     public Type getType() {
         return Type.Double;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

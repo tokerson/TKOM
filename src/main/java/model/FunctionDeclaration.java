@@ -19,4 +19,9 @@ public class FunctionDeclaration extends Node {
     public Type getType() {
         return Type.FunctionDeclaration;
     }
+
+    @Override
+    public String toString() {
+        return identifier;
+    }
 }

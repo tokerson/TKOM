@@ -5,4 +5,9 @@ public class Instruction extends Node {
     public Type getType() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return null;
+    }
 }

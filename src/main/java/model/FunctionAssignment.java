@@ -21,4 +21,12 @@ public class FunctionAssignment extends Node {
     public Type getType() {
         return Type.FunctionAssignment;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder(identifier);
+        stringBuilder.append(" = ");
+        stringBuilder.append(expression.toString());
+        return stringBuilder.toString();
+    }
 }

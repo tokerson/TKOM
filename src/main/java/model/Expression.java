@@ -22,6 +22,18 @@ public class Expression extends Node {
         return Type.Expression;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder(operands.get(0).toString());
+
+        for(int i = 1; i < operands.size(); i++) {
+            stringBuilder.append(operations.get(i - 1).toString());
+            stringBuilder.append(operands.get(i).toString());
+        }
+
+        return stringBuilder.toString();
+    }
+
     public List<Node> getOperands() {
         return operands;
     }
