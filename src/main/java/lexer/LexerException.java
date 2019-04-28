@@ -1,6 +1,6 @@
 package lexer;
 
-import data.TextPosition;
+import model.Token.TextPosition;
 
 public class LexerException extends Exception {
     private TextPosition textPosition;

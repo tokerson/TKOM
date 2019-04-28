@@ -1,11 +1,10 @@
 package lexer;
 
-import data.TextPosition;
-import data.Token;
-import data.TokenType;
-import data.Tokens;
+import model.Token.TextPosition;
+import model.Token.Token;
+import model.Token.TokenType;
+import model.Token.Tokens;
 
-import javax.xml.soap.Text;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -73,22 +72,24 @@ public class Lexer {
 
     private Token getStringToken(StringBuilder stringBuilder, TextPosition tokenPosition) throws Exception {
 
-        do {
+        current = getNextCharacter();
+
+        while (current != '"' && current != EOF){
             stringBuilder.append(current);
             current = getNextCharacter();
             //checking if there is a \" inside a string. If yes then we have to append it to string and keep on getting new chars
             if (current == '\\') {
-                stringBuilder.append(current);
+                System.out.println("ukośnik + " + textPosition.getCharacterNumber());
+//                stringBuilder.append(current);
                 current = getNextCharacter();
-                if (current == '\"') {
-                    stringBuilder.append(current);
-                    current = getNextCharacter();
-                }
+//                if(current != '"'){
+//                    stringBuilder.append(current);
+//                    current = getNextCharacter();
+//                }
             }
-        } while (current != '\"' && current != EOF);
+        }
 
-        if (current == '\"') {
-            stringBuilder.append(current);
+        if (current == '"') {
             current = getNextCharacter();
 
             return new Token(stringBuilder.toString(), TokenType.STRING, tokenPosition);

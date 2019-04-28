@@ -1,7 +1,7 @@
-import data.Token;
-import data.TokenType;
+import model.Token.Token;
 import lexer.Lexer;
 import lexer.LexerException;
+import model.Token.TokenType;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -69,6 +69,14 @@ public class LexerTests {
     }
 
     @Test
+    public void isReturningMinusToken() throws Exception {
+        String text = "-4";
+        Token token = getTokenFromString(text);
+        assertEquals("token's content should be -.", "-", token.getContent());
+        assertEquals("token's type should be SUBSTRACT_OPERATOR", TokenType.SUBSTRACT_OPERATOR, token.getTokenType());
+    }
+
+    @Test
     public void isIgnoringComments() throws Exception {
         String text = "//comment  ";
         Token token = getTokenFromString(text);
@@ -87,7 +95,7 @@ public class LexerTests {
     public void isIdentifiyingStrings() throws Exception {
         String text = "\"hello world\"";
         Token token = getTokenFromString(text);
-        assertEquals("token's content should be \"hello world\"", "\"hello world\"", token.getContent());
+        assertEquals("token's content should be \"hello world\"", "hello world", token.getContent());
         assertEquals("token's type should be STRING", TokenType.STRING, token.getTokenType());
     }
 
@@ -98,10 +106,10 @@ public class LexerTests {
     }
 
     @Test
-    public void isReturningProperMulitLineString() throws Exception {
+    public void isReturningProperMultiLineString() throws Exception {
         String text = "\"hello \n\n world\"";
         Token token = getTokenFromString(text);
-        assertEquals("token's content should be \"hello \n\n world\"", "\"hello \n\n world\"", token.getContent());
+        assertEquals("token's content should be \"hello \n\n world\"", "hello \n\n world", token.getContent());
         assertEquals("token's type should be STRING", TokenType.STRING, token.getTokenType());
     }
 
@@ -115,9 +123,9 @@ public class LexerTests {
 
     @Test
     public void isReturningStringWithBackslashesInside() throws Exception {
-        String text = "\"hello \\world\\\\\"";
+        String text = "\"hello \\world\\\"";
         Token token = getTokenFromString(text);
-        assertEquals("token's content should be \"hello \\world\\\\\"", "\"hello \\world\\\\\"", token.getContent());
+        assertEquals("token's content should be \"hello \\world\\\"", "hello \\world\\", token.getContent());
         assertEquals("token's type should be STRING", TokenType.STRING, token.getTokenType());
     }
 

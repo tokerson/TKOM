@@ -1,8 +1,8 @@
-package data;
+package model.Token;
 
 import java.util.HashMap;
 
-import static data.TokenType.*;
+import static model.Token.TokenType.*;
 
 public class Tokens {
     public static final HashMap<String, TokenType> KEYWORDS = new HashMap<String, TokenType>() {{

@@ -1,4 +1,4 @@
-package data;
+package model.Token;
 
 public class TextPosition implements Cloneable {
     private int lineNumber;

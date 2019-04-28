@@ -2,22 +2,22 @@ def Int sum(a: Int, b:Int){
     return a + b;
 }
 
-d = -2;
+def d = -2;
 
 
-c = sum(1,2) - 4;
+def c = sum(1,2) - 4;
 
 if( sum(4,2) > c) {
     //statement;
 }
-else if ( 4 > 2 && 2 < 3 ) {
+elsif ( 4 > 2 && 2 < 3 ) {
     //statement;
 }
 else {
     //statement;
 }
 
-//function prints numbers from 10 to 0;
+//statement prints numbers from 10 to 0;
 def void forRecursive(n: Int) {
     printLine(n);
     if(n > 0) {

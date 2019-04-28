@@ -1,4 +1,4 @@
-package data;
+package model.Token;
 
 public enum TokenType {
     INTEGER,
