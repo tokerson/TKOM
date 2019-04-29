@@ -1,8 +1,10 @@
 //this is a comment
 
-def x;
-def y;
-
 def x = 4;
 
 def y = -2;
+
+def s(Int: a, Int: b){
+    def x = 4 + 1 * 3;
+    def y = 2;
+};

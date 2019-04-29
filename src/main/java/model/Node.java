@@ -15,7 +15,7 @@ public abstract class Node {
         IfStatement,
         Program,
         ReturnStatement,
-        StatementBlock,
+        BodyBlock,
         VarDeclaration,
         Literal,
         Variable,

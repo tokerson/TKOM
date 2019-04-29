@@ -34,6 +34,7 @@ public enum TokenType {
     QUOTATION,
     PARAMETER_TYPE,
     INT_TYPE,
+    DOUBLE_TYPE,
     ARRAY_OPEN,
     ARRAY_CLOSE,
     STRING,

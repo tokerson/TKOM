@@ -13,6 +13,7 @@ public class Tokens {
         put("else", ELSE);
         put("return", RETURN);
         put("Int", INT_TYPE);
+        put("Double", DOUBLE_TYPE);
     }};
 
     public static final HashMap<String, TokenType> OPERATORS = new HashMap<String, TokenType>() {{

@@ -27,7 +27,7 @@ public class Main {
         try {
             program = parser.parse();
             for (Node statement: program.getStatements()) {
-                System.out.println(statement.getType());
+                System.out.println(statement);
             }
 
         } catch (Exception e) {

@@ -7,6 +7,8 @@ import model.Token.Token;
 import lexer.Lexer;
 import model.Token.TokenType;
 
+import java.util.ArrayList;
+
 public class Parser {
 
     private final Lexer lexer;
@@ -38,28 +40,112 @@ public class Parser {
             case FUNCTION_DECL:
                 accept(TokenType.FUNCTION_DECL);
                 return parseFunctionDeclaration();
+            case SEMICOLON:
+                accept(TokenType.SEMICOLON);
+                return parseInstruction();
             default:
                 throw new ParserException(token, new TokenType[]{TokenType.END, TokenType.FUNCTION_DECL});
-
         }
-
     }
 
     private Node parseFunctionDeclaration() throws Exception {
         String identifier = token.getContent();
         accept(TokenType.IDENTIFIER);
+        FunctionDeclaration functionDeclaration;
 
         switch (token.getTokenType()) {
-            case SEMICOLON:
-                accept(TokenType.SEMICOLON);
-                return new FunctionDeclaration(identifier);
+            case PARENTHESIS_OPEN:
+                accept(TokenType.PARENTHESIS_OPEN);
+                functionDeclaration = new FunctionDeclaration(identifier, parseFunctionParameters(), parseFunctionBody());
+                return functionDeclaration;
             case ASSIGN_OPERATOR:
                 accept(TokenType.ASSIGN_OPERATOR);
                 return parseFunctionAssignment(identifier);
             default:
-                throw new ParserException(token, new TokenType[]{TokenType.SEMICOLON});
+                throw new ParserException(token, new TokenType[]{TokenType.ASSIGN_OPERATOR, TokenType.PARENTHESIS_OPEN});
         }
 
+    }
+
+    private BodyBlock parseFunctionBody() throws Exception {
+        BodyBlock bodyBlock = new BodyBlock();
+
+        accept(TokenType.BRACKET_OPEN);
+        boolean endOfBlock = false;
+        while (!endOfBlock) {
+            switch (token.getTokenType()) {
+                case IF:
+                    bodyBlock.addInstruction(parseIf());
+                    break;
+                case RETURN:
+                    bodyBlock.addInstruction(parseReturn());
+                    break;
+                case IDENTIFIER:
+                    bodyBlock.addInstruction(parseFunctionCall());
+                    break;
+                case FUNCTION_DECL:
+                    accept(TokenType.FUNCTION_DECL);
+                    String identifier = token.getContent();
+                    accept(TokenType.IDENTIFIER);
+                    accept(TokenType.ASSIGN_OPERATOR);
+                    bodyBlock.addInstruction(parseFunctionAssignment(identifier));
+                    break;
+                default:
+                    if(token.getTokenType().equals(TokenType.BRACKET_CLOSE)){
+                        endOfBlock = true;
+                    } else {
+                        throw new ParserException(token, new TokenType[]{
+                           TokenType.IF, TokenType.RETURN, TokenType.IDENTIFIER, TokenType.BRACKET_CLOSE
+                        });
+                    }
+                    break;
+            }
+        }
+        accept(TokenType.BRACKET_CLOSE);
+        return bodyBlock;
+    }
+
+    private Node parseFunctionCall() {
+        return null;
+    }
+
+    private Node parseReturn() {
+        return null;
+    }
+
+    private Node parseIf() {
+        return null;
+    }
+
+    private ArrayList<Parameter> parseFunctionParameters() throws Exception {
+        ArrayList<Parameter> parameters = new ArrayList<>();
+        String name;
+
+        while (token.getTokenType() != TokenType.PARENTHESIS_CLOSE) {
+            switch (token.getTokenType()) {
+                case INT_TYPE:
+                    accept(TokenType.INT_TYPE);
+                    accept(TokenType.PARAMETER_TYPE);
+                    name = token.getContent();
+                    accept(TokenType.IDENTIFIER);
+                    parameters.add(new Parameter("Int", name));
+                    break;
+                case DOUBLE_TYPE:
+                    accept(TokenType.DOUBLE_TYPE);
+                    accept(TokenType.PARAMETER_TYPE);
+                    name = token.getContent();
+                    accept(TokenType.IDENTIFIER);
+                    parameters.add(new Parameter("Double", name));
+                    break;
+                default:
+                    throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE, TokenType.PARENTHESIS_CLOSE});
+            }
+            if (token.getTokenType().equals(TokenType.COMMA)) {
+                accept(TokenType.COMMA);
+            }
+        }
+        accept(TokenType.PARENTHESIS_CLOSE);
+        return parameters;
     }
 
     private Node parseFunctionAssignment(String identifier) throws Exception {
@@ -70,48 +156,62 @@ public class Parser {
         Expression expression = new Expression();
         expression.addOperand(parseMultiplitcativeExpression());
 
-        switch (token.getTokenType()) {
-            case ADD_OPERATOR:
-                accept(TokenType.ADD_OPERATOR);
-                expression.addOperator(TokenType.ADD_OPERATOR);
-                expression.addOperand(parseMultiplitcativeExpression());
-                break;
-            case SUBSTRACT_OPERATOR:
-                accept(TokenType.SUBSTRACT_OPERATOR);
-                expression.addOperator(TokenType.SUBSTRACT_OPERATOR);
-                expression.addOperand(parseMultiplitcativeExpression());
-                break;
-            case SEMICOLON:
-                accept(TokenType.SEMICOLON);
-                break;
-            case END:
-                return null;
-            default:
-                throw new ParserException(token, new TokenType[]{TokenType.ADD_OPERATOR, TokenType.SUBSTRACT_OPERATOR, TokenType.SEMICOLON});
+        while (tokenIs(TokenType.ADD_OPERATOR, TokenType.SUBSTRACT_OPERATOR, TokenType.SEMICOLON)) {
+            switch (token.getTokenType()) {
+                case ADD_OPERATOR:
+                    accept(TokenType.ADD_OPERATOR);
+                    expression.addOperator(TokenType.ADD_OPERATOR);
+                    expression.addOperand(parseMultiplitcativeExpression());
+                    break;
+                case SUBSTRACT_OPERATOR:
+                    accept(TokenType.SUBSTRACT_OPERATOR);
+                    expression.addOperator(TokenType.SUBSTRACT_OPERATOR);
+                    expression.addOperand(parseMultiplitcativeExpression());
+                    break;
+                case SEMICOLON:
+                    accept(TokenType.SEMICOLON);
+                    break;
+                case END:
+                    return null;
+                default:
+                    throw new ParserException(token, new TokenType[]{TokenType.ADD_OPERATOR, TokenType.SUBSTRACT_OPERATOR, TokenType.SEMICOLON});
+            }
         }
 
         return expression;
+    }
+
+    private boolean tokenIs(TokenType... tokenTypes) {
+
+        for (TokenType type : tokenTypes) {
+            if (token.getTokenType().equals(type)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Node parseMultiplitcativeExpression() throws Exception {
         Expression expression = new Expression();
         expression.addOperand(parsePrimaryExpression());
 
-        switch (token.getTokenType()) {
-            case MULTIPLY_OPERATOR:
-                accept(TokenType.MULTIPLY_OPERATOR);
-                expression.addOperator(TokenType.MULTIPLY_OPERATOR);
-                expression.addOperand(parsePrimaryExpression());
-                break;
-            case DIVIDE_OPERATOR:
-                accept(TokenType.DIVIDE_OPERATOR);
-                expression.addOperator(TokenType.DIVIDE_OPERATOR);
-                expression.addOperand(parsePrimaryExpression());
-                break;
-            case SEMICOLON:
-                break;
-            default:
-                throw new ParserException(token, new TokenType[]{TokenType.MULTIPLY_OPERATOR, TokenType.DIVIDE_OPERATOR});
+        while (tokenIs(TokenType.MULTIPLY_OPERATOR, TokenType.DIVIDE_OPERATOR)) {
+            switch (token.getTokenType()) {
+                case MULTIPLY_OPERATOR:
+                    accept(TokenType.MULTIPLY_OPERATOR);
+                    expression.addOperator(TokenType.MULTIPLY_OPERATOR);
+                    expression.addOperand(parsePrimaryExpression());
+                    break;
+                case DIVIDE_OPERATOR:
+                    accept(TokenType.DIVIDE_OPERATOR);
+                    expression.addOperator(TokenType.DIVIDE_OPERATOR);
+                    expression.addOperand(parsePrimaryExpression());
+                    break;
+                case SEMICOLON:
+                    break;
+                default:
+                    throw new ParserException(token, new TokenType[]{TokenType.MULTIPLY_OPERATOR, TokenType.DIVIDE_OPERATOR});
+            }
         }
 
         return expression;
@@ -119,12 +219,12 @@ public class Parser {
     }
 
     private Node parsePrimaryExpression() throws Exception {
-        Expression expression;
+        Expression expression = new Expression();
 
         switch (token.getTokenType()) {
             case PARENTHESIS_OPEN:
                 accept(TokenType.PARENTHESIS_OPEN);
-                expression = parseExpression();
+                expression.addOperand(parseExpression());
                 accept(TokenType.PARENTHESIS_CLOSE);
                 return expression;
             case IDENTIFIER:
@@ -161,7 +261,7 @@ public class Parser {
                 accept(TokenType.INTEGER);
                 return new MyInteger(intVal * sign);
             case DOUBLE:
-                double doubleVal= Double.parseDouble(token.getContent());
+                double doubleVal = Double.parseDouble(token.getContent());
                 accept(TokenType.DOUBLE);
                 return new MyDouble(doubleVal * sign);
             default:
