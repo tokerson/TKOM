@@ -5,7 +5,7 @@ public abstract class Node {
 
     public enum Type {
         Assignment,
-        Call,
+        FunctionCall,
         Condition,
         Integer,
         Double,

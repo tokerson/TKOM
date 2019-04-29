@@ -8,6 +8,7 @@ import lexer.Lexer;
 import model.Token.TokenType;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Parser {
 
@@ -82,6 +83,7 @@ public class Parser {
                     break;
                 case IDENTIFIER:
                     bodyBlock.addInstruction(parseFunctionCall());
+                    accept(TokenType.SEMICOLON);
                     break;
                 case FUNCTION_DECL:
                     accept(TokenType.FUNCTION_DECL);
@@ -95,7 +97,7 @@ public class Parser {
                         endOfBlock = true;
                     } else {
                         throw new ParserException(token, new TokenType[]{
-                           TokenType.IF, TokenType.RETURN, TokenType.IDENTIFIER, TokenType.BRACKET_CLOSE
+                           TokenType.IF, TokenType.RETURN, TokenType.IDENTIFIER, TokenType.BRACKET_CLOSE, TokenType.FUNCTION_DECL
                         });
                     }
                     break;
@@ -105,8 +107,42 @@ public class Parser {
         return bodyBlock;
     }
 
-    private Node parseFunctionCall() {
-        return null;
+    private Node parseFunctionCall() throws Exception {
+        String identifier = token.getContent();
+        FunctionCall functionCall = new FunctionCall(identifier);
+        accept(TokenType.IDENTIFIER);
+
+        if(token.getTokenType() != TokenType.PARENTHESIS_OPEN) {
+            return functionCall;
+        }
+
+        accept(TokenType.PARENTHESIS_OPEN);
+        functionCall.setArguments(parseFunctionArguments());
+        accept(TokenType.PARENTHESIS_CLOSE);
+        return functionCall;
+    }
+
+    private List<Node> parseFunctionArguments() throws Exception {
+        List<Node> arguments = new ArrayList<>();
+        while (token.getTokenType() != TokenType.PARENTHESIS_CLOSE) {
+            switch (token.getTokenType()) {
+                case IDENTIFIER:
+                case INTEGER:
+                case DOUBLE:
+                case ADD_OPERATOR:
+                case SUBSTRACT_OPERATOR:
+                    arguments.add(parseExpression());
+                    break;
+                default:
+                    throw new ParserException(token, new TokenType[]{
+                            TokenType.IDENTIFIER, TokenType.INTEGER, TokenType.DOUBLE, TokenType.PARENTHESIS_CLOSE
+                    });
+            }
+            if (token.getTokenType().equals(TokenType.COMMA)) {
+                accept(TokenType.COMMA);
+            }
+        }
+        return arguments;
     }
 
     private Node parseReturn() {
@@ -156,7 +192,7 @@ public class Parser {
         Expression expression = new Expression();
         expression.addOperand(parseMultiplitcativeExpression());
 
-        while (tokenIs(TokenType.ADD_OPERATOR, TokenType.SUBSTRACT_OPERATOR, TokenType.SEMICOLON)) {
+        while (tokenIs(TokenType.ADD_OPERATOR, TokenType.SUBSTRACT_OPERATOR, TokenType.SEMICOLON, TokenType.IDENTIFIER)) {
             switch (token.getTokenType()) {
                 case ADD_OPERATOR:
                     accept(TokenType.ADD_OPERATOR);
@@ -228,11 +264,11 @@ public class Parser {
                 accept(TokenType.PARENTHESIS_CLOSE);
                 return expression;
             case IDENTIFIER:
-                break;
+                expression.addOperand(parseFunctionCall());
+                return expression;
             default:
                 return parseLiteral();
         }
-        return null;
     }
 
     private Node parseLiteral() throws Exception {

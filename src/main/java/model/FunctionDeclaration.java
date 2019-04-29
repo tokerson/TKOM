@@ -45,7 +45,7 @@ public class FunctionDeclaration extends Node {
             if( i != parameters.size() - 1 ) stringBuilder.append(", ");
         }
         stringBuilder.append(")");
-        stringBuilder.append(bodyBlock);
+        stringBuilder.append(bodyBlock) ;
 
         return stringBuilder.toString();
     }
