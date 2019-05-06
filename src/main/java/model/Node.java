@@ -14,7 +14,7 @@ public abstract class Node {
         FunctionAssignment,
         IfStatement,
         Program,
-        ReturnStatement,
+        Return,
         BodyBlock,
         VarDeclaration,
         Literal,

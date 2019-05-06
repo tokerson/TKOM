@@ -1,11 +1,17 @@
 //this is a comment
 
-def x = 4;
+def Int x = 4;
 
-def y = -2;
+def Int y = -2;
 
-def s(Int: a, Int: b){
-    def x = 4 + 1 * 3;
-    def y = x;
-    def y = x(y + 4);
+def Int s(Int: a, Int: b){
+    def Int x = 4 + 1 * 3;
+    def Int y = x;
+    def Int y = x(y + 4);
+
+    return 4+5;
 };
+
+def void x(){
+    return x;
+}

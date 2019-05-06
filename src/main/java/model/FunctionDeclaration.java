@@ -2,7 +2,6 @@ package model;
 
 import model.Token.TokenType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FunctionDeclaration extends Node {
@@ -11,22 +10,11 @@ public class FunctionDeclaration extends Node {
     List<Parameter> parameters;
     BodyBlock bodyBlock;
 
-    public FunctionDeclaration(String identifier, List parameters, BodyBlock bodyBlock) {
+    public FunctionDeclaration(String identifier, TokenType returnType, List<Parameter> parameters, BodyBlock bodyBlock) {
         this.identifier = identifier;
+        this.returnType = returnType;
         this.parameters = parameters;
         this.bodyBlock = bodyBlock;
-    }
-
-    public void addParameter(Parameter parameter){
-        this.parameters.add(parameter);
-    }
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
     }
 
     @Override
@@ -36,7 +24,10 @@ public class FunctionDeclaration extends Node {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder(identifier);
+        StringBuilder stringBuilder = new StringBuilder("def ");
+        stringBuilder.append(returnType);
+        stringBuilder.append(" ");
+        stringBuilder.append(identifier);
         stringBuilder.append("( ");
         for(int i = 0; i < parameters.size(); i++) {
             stringBuilder.append(parameters.get(i).getType());

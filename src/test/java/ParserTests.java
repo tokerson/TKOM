@@ -16,14 +16,14 @@ public class ParserTests {
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithPositiveInteger() throws Exception {
-        String text = "def x = 4;";
+        String text = "def Int x = 4;";
         Program program = parse(text);
         assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatements().get(0).getType());
     }
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithAdditiveOperationOnIntegers() throws Exception {
-        String text = "def x = 4 + 4;";
+        String text = "def Int x = 4 + 4;";
         Program program = parse(text);
         System.out.println(program.getStatements().get(0));
         assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatements().get(0).getType());
@@ -31,7 +31,7 @@ public class ParserTests {
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithAdditiveOperationOnDoubles() throws Exception {
-        String text = "def x = 4.2 + 4.1;";
+        String text = "def Double x = 4.2 + 4.1;";
         Program program = parse(text);
         System.out.println(program.getStatements().get(0));
         assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatements().get(0).getType());
@@ -39,7 +39,7 @@ public class ParserTests {
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithMultiplicativeOperationOnIntegers() throws Exception {
-        String text = "def x = 4 * 4;";
+        String text = "def Int x = 4 * 4;";
         Program program = parse(text);
         System.out.println(program.getStatements().get(0));
         assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatements().get(0).getType());
@@ -47,7 +47,7 @@ public class ParserTests {
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithMultiplicativeOperationOnDoubles() throws Exception {
-        String text = "def x = 4.2 * 4.1;";
+        String text = "def Double x = 4.2 * 4.1;";
         Program program = parse(text);
         System.out.println(program.getStatements().get(0));
         assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatements().get(0).getType());
@@ -55,21 +55,21 @@ public class ParserTests {
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithNegativeInteger() throws Exception {
-        String text = "def x = -4;";
+        String text = "def Int x = -4;";
         Program program = parse(text);
         assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatements().get(0).getType());
     }
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithPositiveDouble() throws Exception {
-        String text = "def x = 4.25;";
+        String text = "def Double x = 4.25;";
         Program program = parse(text);
         assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatements().get(0).getType());
     }
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithNegativeDouble() throws Exception {
-        String text = "def x = -4.25;";
+        String text = "def Double x = -4.25;";
         Program program = parse(text);
         System.out.println(program.getStatements().get(0));
         assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatements().get(0).getType());
@@ -77,7 +77,7 @@ public class ParserTests {
 
     @Test
     public void isParsingFunctionAssignmentWithIntgerInsideParenthesis() throws Exception {
-        String text = "def x = (4);";
+        String text = "def Int x = (4);";
         Program program = parse(text);
         System.out.println(program.getStatements().get(0));
         assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatements().get(0).getType());
@@ -85,10 +85,16 @@ public class ParserTests {
 
     @Test
     public void isParsingFunctionAssignmentWithParenthesis() throws Exception {
-        String text = "def x = 2*(1+4);";
+        String text = "def Int x = 2*(1+4);";
         Program program = parse(text);
         System.out.println(program.getStatements().get(0));
         assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatements().get(0).getType());
+    }
+
+    @Test(expected = Exception.class)
+    public void isThrowingExceptionWhenVoidFunctionReturnsSomething() throws Exception {
+        String text = "def void x(){return 1;}";
+        Program program = parse(text);
     }
 
     private Program parse(String string) throws Exception {

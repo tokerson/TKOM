@@ -1,20 +1,17 @@
 package model;
 
+import model.Token.TokenType;
+
 public class FunctionAssignment extends Node {
     private String identifier;
     private Expression expression;
+    private TokenType returnType;
 
-    public FunctionAssignment(String identifier, Expression expression) {
+
+    public FunctionAssignment(String identifier, Expression expression, TokenType returnType) {
         this.identifier = identifier;
         this.expression = expression;
-    }
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+        this.returnType = returnType;
     }
 
     @Override
@@ -24,7 +21,10 @@ public class FunctionAssignment extends Node {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder(identifier);
+        StringBuilder stringBuilder = new StringBuilder("def ");
+        stringBuilder.append(returnType);
+        stringBuilder.append(" ");
+        stringBuilder.append(identifier +" ");
         stringBuilder.append(" = ");
         stringBuilder.append(expression.toString());
         return stringBuilder.toString();
