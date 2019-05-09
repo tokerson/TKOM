@@ -1,5 +1,6 @@
 import lexer.Lexer;
 import model.FunctionAssignment;
+import model.IfStatement;
 import model.Node;
 import model.Program.Program;
 import model.Token.Token;
@@ -12,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ParserTests {
 
@@ -132,6 +134,51 @@ public class ParserTests {
                 "}";
         Program program = parse(text);
         assertEquals("First statement should be", Node.Type.FunctionDeclaration,program.getStatement(0).getType());
+    }
+
+    @Test
+    public void isParsingIfStatement() throws Exception {
+        String text = "if(4 > 2){}";
+        Program program = parse(text);
+        assertEquals("First statement should be", Node.Type.IfStatement,program.getStatement(0).getType());
+    }
+
+    @Test
+    public void isParsingIfWithElseifStatement() throws Exception {
+        String text = "if(4 > 2){}\nelsif( 2 > 3){}";
+        Program program = parse(text);
+        assertEquals("First statement should be", Node.Type.IfStatement,program.getStatement(0).getType());
+        IfStatement ifStatement = (IfStatement) program.getStatement(0);
+        assertEquals("Elsif statement should be inside", 1,ifStatement.getElsifConditions().size());
+    }
+
+    @Test
+    public void isParsingIfWith2ElseifStatements() throws Exception {
+        String text = "if(4 > 2){}\nelsif( 2 > 3){}\nelsif(3 == 2){}";
+        Program program = parse(text);
+        assertEquals("First statement should be", Node.Type.IfStatement,program.getStatement(0).getType());
+        IfStatement ifStatement = (IfStatement) program.getStatement(0);
+        assertEquals("Elsif statement should be inside", 2,ifStatement.getElsifConditions().size());
+    }
+
+    @Test
+    public void isParsingIfWithElseStatements() throws Exception {
+        String text = "if(4 > 2){}\nelse{}";
+        Program program = parse(text);
+        assertEquals("First statement should be", Node.Type.IfStatement,program.getStatement(0).getType());
+        IfStatement ifStatement = (IfStatement) program.getStatement(0);
+        assertNotNull("Elsif statement should be inside",ifStatement.getElseBlock());
+    }
+    @Test(expected = ParserException.class)
+    public void isThrowingExceptionWhenTwoElseStatements() throws Exception {
+        String text = "if(4 > 2){}\nelse{}\nelse{}";
+        Program program = parse(text);
+    }
+
+    @Test(expected = ParserException.class)
+    public void isThrowingExceptionWhenElsifIsAfterElseStatements() throws Exception {
+        String text = "if(4 > 2){}\nelse{}\nelseif( 1 == 1 ){}";
+        Program program = parse(text);
     }
 
     private Program parse(String string) throws Exception {

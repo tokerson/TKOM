@@ -8,11 +8,20 @@ public class ParserException extends Exception{
 
     private final Token token;
     private final TokenType[] expected;
+    private String message = null;
 
     public ParserException(Token token, TokenType[] expected) {
         this.token = token;
         this.expected = expected;
     }
+    public ParserException(Token token, String message) {
+        this.token = token;
+        this.message = message;
+        this.expected = null;
+    }
+
+
+
 
     @Override
     public String getMessage(){
@@ -20,14 +29,19 @@ public class ParserException extends Exception{
         stringBuilder.append(token.getTextPosition().getLineNumber());
         stringBuilder.append(" and char: ");
         stringBuilder.append(token.getTextPosition().getCharacterNumber());
-        stringBuilder.append("\nExpected ");
-        for (TokenType type: expected) {
-            stringBuilder.append(type);
-            stringBuilder.append(", ");
+
+        if (message != null) {
+            stringBuilder.append(message);
+        } else {
+            stringBuilder.append("\nExpected ");
+            for (TokenType type: expected) {
+                stringBuilder.append(type);
+                stringBuilder.append(", ");
+            }
+            stringBuilder.append("but found ");
+            stringBuilder.append(token.getTokenType());
+            stringBuilder.append(".");
         }
-        stringBuilder.append("but found ");
-        stringBuilder.append(token.getTokenType());
-        stringBuilder.append(".");
 
         return stringBuilder.toString();
     }

@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Expression extends Node {
-    protected List<TokenType> operations = new LinkedList<>();
 
+    protected List<TokenType> operations = new LinkedList<>();
     protected List<Node> operands = new LinkedList<>();
 
     public void addOperator(final TokenType operator) {

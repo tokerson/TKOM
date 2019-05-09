@@ -44,8 +44,10 @@ public class Parser {
             case SEMICOLON:
                 accept(TokenType.SEMICOLON);
                 return parseInstruction();
+            case IF:
+                return parseIf();
             default:
-                throw new ParserException(token, new TokenType[]{TokenType.END, TokenType.FUNCTION_DECL});
+                throw new ParserException(token, new TokenType[]{TokenType.END, TokenType.FUNCTION_DECL, TokenType.IF});
         }
     }
 
@@ -72,7 +74,7 @@ public class Parser {
 
     private TokenType parseReturnedType() throws Exception {
         TokenType type = token.getTokenType();
-        switch(token.getTokenType()) {
+        switch (token.getTokenType()) {
             case INT_TYPE:
                 accept(TokenType.INT_TYPE);
                 break;
@@ -101,11 +103,11 @@ public class Parser {
                     bodyBlock.addInstruction(parseIf());
                     break;
                 case RETURN:
-                    if(functionType != TokenType.VOID){
+                    if (functionType != TokenType.VOID) {
                         bodyBlock.addInstruction(parseReturn());
                         parsedReturn = true;
-                    }
-                    else throw new Exception("Unexpected return statement at line "+token.getTextPosition().getLineNumber()+ " and char "+token.getTextPosition().getCharacterNumber());
+                    } else
+                        throw new Exception("Unexpected return statement at line " + token.getTextPosition().getLineNumber() + " and char " + token.getTextPosition().getCharacterNumber());
                     break;
                 case IDENTIFIER:
                     bodyBlock.addInstruction(parseFunctionCall());
@@ -120,17 +122,17 @@ public class Parser {
                     bodyBlock.addInstruction(parseFunctionAssignment(identifier, type));
                     break;
                 default:
-                    if(token.getTokenType().equals(TokenType.BRACKET_CLOSE)){
+                    if (token.getTokenType().equals(TokenType.BRACKET_CLOSE)) {
                         endOfBlock = true;
                     } else {
                         throw new ParserException(token, new TokenType[]{
-                           TokenType.IF, TokenType.RETURN, TokenType.IDENTIFIER, TokenType.BRACKET_CLOSE, TokenType.FUNCTION_DECL
+                                TokenType.IF, TokenType.RETURN, TokenType.IDENTIFIER, TokenType.BRACKET_CLOSE, TokenType.FUNCTION_DECL
                         });
                     }
                     break;
             }
         }
-        if(functionType != TokenType.VOID && !parsedReturn) {
+        if (functionType != TokenType.IF && functionType != TokenType.ELSIF && functionType != TokenType.ELSE && functionType != TokenType.VOID && !parsedReturn) {
             throw new ParserException(token, new TokenType[]{TokenType.RETURN});
         }
         accept(TokenType.BRACKET_CLOSE);
@@ -142,7 +144,7 @@ public class Parser {
         FunctionCall functionCall = new FunctionCall(identifier);
         accept(TokenType.IDENTIFIER);
 
-        if(token.getTokenType() != TokenType.PARENTHESIS_OPEN) {
+        if (token.getTokenType() != TokenType.PARENTHESIS_OPEN) {
             return functionCall;
         }
 
@@ -183,15 +185,112 @@ public class Parser {
         return returnStatement;
     }
 
-    private Node parseIf() {
-        return null;
+    private Node parseIf() throws Exception {
+        IfStatement ifStatement = new IfStatement();
+
+        accept(TokenType.IF);
+        accept(TokenType.PARENTHESIS_OPEN);
+        ifStatement.setCondition(parseCondition());
+        accept(TokenType.PARENTHESIS_CLOSE);
+        ifStatement.setThenBlock(parseFunctionBody(TokenType.IF));
+        boolean foundElse = false;
+        while (!foundElse && (token.getTokenType() == TokenType.ELSE || token.getTokenType() == TokenType.ELSIF)) {
+            switch (token.getTokenType()) {
+                case ELSIF:
+                    accept(TokenType.ELSIF);
+                    accept(TokenType.PARENTHESIS_OPEN);
+                    Condition condition = parseCondition();
+                    accept(TokenType.PARENTHESIS_CLOSE);
+                    ifStatement.addElseIf(condition, parseFunctionBody(TokenType.ELSIF));
+                    break;
+                case ELSE:
+                    accept(TokenType.ELSE);
+                    ifStatement.setElseBlock(parseFunctionBody(TokenType.ELSE));
+                    foundElse = true;
+                    break;
+                default:
+                    throw new ParserException(token, new TokenType[]{TokenType.ELSIF, TokenType.ELSE});
+            }
+        }
+        if(foundElse && token.getTokenType() == TokenType.ELSE){
+            throw new ParserException(token, " Two ELSE statements for one IF");
+        }
+
+        return ifStatement;
     }
 
-    private Condition parseCondition() throws Exception{
+    private Condition parseCondition() throws Exception {
         Condition condition = new Condition();
 
+        condition.addOperand(parseAndCondition());
+        while (token.getTokenType() == TokenType.OR) {
+            accept(TokenType.OR);
+            condition.addOperator(TokenType.OR);
+            condition.addOperand(parseAndCondition());
+        }
+        return condition;
+    }
 
+    private Condition parseAndCondition() throws Exception {
+        Condition condition = new Condition();
 
+        condition.addOperand(parseEqualityCondition());
+        while (token.getTokenType() == TokenType.AND) {
+            accept(TokenType.AND);
+            condition.addOperator(TokenType.AND);
+            condition.addOperand(parseEqualityCondition());
+        }
+        return condition;
+    }
+
+    private Node parseEqualityCondition() throws Exception {
+        Condition condition = new Condition();
+
+        condition.addOperand(parseRelationalCondition());
+        while (token.getTokenType() == TokenType.EQUALS_OPERATOR || token.getTokenType() == TokenType.NOT_EQUALS_OPERATOR) {
+            TokenType currentTokenType = token.getTokenType();
+            switch (token.getTokenType()) {
+                case EQUALS_OPERATOR:
+                    accept(TokenType.EQUALS_OPERATOR);
+                    break;
+                case NOT_EQUALS_OPERATOR:
+                    accept(TokenType.NOT_EQUALS_OPERATOR);
+                    break;
+                default:
+                    throw new ParserException(token, new TokenType[]{TokenType.EQUALS_OPERATOR, TokenType.NOT_EQUALS_OPERATOR});
+            }
+            condition.addOperator(currentTokenType);
+            condition.addOperand(parseRelationalCondition());
+        }
+        return condition;
+    }
+
+    private Node parseRelationalCondition() throws Exception {
+        Condition condition = new Condition();
+
+        condition.addOperand(parsePrimaryExpression());
+        while ( token.getTokenType() == TokenType.LESS_OPERATOR || token.getTokenType() == TokenType.LESS_EQUALS_OPERATOR ||
+                token.getTokenType() == TokenType.GREATER_OPERATOR || token.getTokenType() == TokenType.GREATER_EQUALS_OPERATOR) {
+            TokenType currentTokenType = token.getTokenType();
+            switch (token.getTokenType()) {
+                case LESS_OPERATOR:
+                    accept(TokenType.LESS_OPERATOR);
+                    break;
+                case LESS_EQUALS_OPERATOR:
+                    accept(TokenType.LESS_EQUALS_OPERATOR);
+                    break;
+                case GREATER_OPERATOR:
+                    accept(TokenType.GREATER_OPERATOR);
+                    break;
+                case GREATER_EQUALS_OPERATOR:
+                    accept(TokenType.GREATER_EQUALS_OPERATOR);
+                    break;
+                default:
+                    throw new ParserException(token, new TokenType[]{TokenType.LESS_EQUALS_OPERATOR, TokenType.LESS_OPERATOR, TokenType.GREATER_OPERATOR, TokenType.GREATER_EQUALS_OPERATOR});
+            }
+            condition.addOperator(currentTokenType);
+            condition.addOperand(parsePrimaryExpression());
+        }
         return condition;
     }
 
