@@ -17,6 +17,10 @@ public class Program {
         return statements;
     }
 
+    public Node getStatement(int index) {
+        return statements.get(index);
+    }
+
     public void add(Node statement) {
         statements.add(statement);
     }

@@ -12,6 +12,6 @@ def Int s(Int: a, Int: b){
     return 4+5;
 };
 
-def void x(){
-    return x;
+def Int x(){
+    return 4;
 }

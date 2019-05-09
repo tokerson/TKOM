@@ -91,8 +91,7 @@ public class Parser {
 
     private BodyBlock parseFunctionBody(TokenType functionType) throws Exception {
         BodyBlock bodyBlock = new BodyBlock();
-
-
+        boolean parsedReturn = false;
 
         accept(TokenType.BRACKET_OPEN);
         boolean endOfBlock = false;
@@ -104,6 +103,7 @@ public class Parser {
                 case RETURN:
                     if(functionType != TokenType.VOID){
                         bodyBlock.addInstruction(parseReturn());
+                        parsedReturn = true;
                     }
                     else throw new Exception("Unexpected return statement at line "+token.getTextPosition().getLineNumber()+ " and char "+token.getTextPosition().getCharacterNumber());
                     break;
@@ -129,6 +129,9 @@ public class Parser {
                     }
                     break;
             }
+        }
+        if(functionType != TokenType.VOID && !parsedReturn) {
+            throw new ParserException(token, new TokenType[]{TokenType.RETURN});
         }
         accept(TokenType.BRACKET_CLOSE);
         return bodyBlock;
