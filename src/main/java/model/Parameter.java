@@ -26,9 +26,6 @@ public class Parameter{
     @Override
     public String toString(){
         StringBuilder stringBuilder = new StringBuilder();
-        if(type.isArray()){
-            stringBuilder.append("[]");
-        }
         stringBuilder.append(type);
         stringBuilder.append(": ");
         stringBuilder.append(name);

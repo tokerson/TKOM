@@ -17,8 +17,8 @@ public class FunctionDeclaration extends Node {
         this.bodyBlock = bodyBlock;
     }
 
-    public TokenType getReturnType() {
-        return returnType.getType();
+    public MyType getReturnType() {
+        return returnType;
     }
 
     public List<Parameter> getParameters() {

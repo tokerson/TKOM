@@ -73,7 +73,7 @@ public class Parser {
     }
 
     private MyType parseReturnedType() throws Exception {
-        TokenType type = token.getTokenType();
+        TokenType type;
         MyType myType;
         boolean isArray = false;
         switch (token.getTokenType()) {
@@ -82,11 +82,13 @@ public class Parser {
                 accept(TokenType.ARRAY_CLOSE);
                 isArray = true;
                 if(tokenIs(TokenType.INT_TYPE, TokenType.DOUBLE_TYPE)){
+                    type = token.getTokenType();
                     accept(token.getTokenType());
-                }
+                } else throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE});
                 break;
             case INT_TYPE:
             case DOUBLE_TYPE:
+                type = token.getTokenType();
                 accept(token.getTokenType());
                 break;
             default:

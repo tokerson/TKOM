@@ -7,11 +7,18 @@ public class FunctionAssignment extends Node {
     private Expression expression;
     private MyType returnType;
 
-
     public FunctionAssignment(String identifier, Expression expression, MyType returnType) {
         this.identifier = identifier;
         this.expression = expression;
         this.returnType = returnType;
+    }
+
+    public MyType getReturnType() {
+        return returnType;
+    }
+
+    public Expression getExpression() {
+        return expression;
     }
 
     @Override

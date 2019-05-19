@@ -22,4 +22,14 @@ public class MyType {
     public TokenType getType() {
         return type;
     }
+
+    @Override
+    public String toString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        if(isArray()){
+            stringBuilder.append("[]");
+        }
+        stringBuilder.append(type);
+        return stringBuilder.toString();
+    }
 }
