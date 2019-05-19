@@ -53,7 +53,7 @@ public class Parser {
 
     private Node parseFunctionDeclaration() throws Exception {
         FunctionDeclaration functionDeclaration;
-        TokenType type = parseReturnedType();
+        MyType type = parseReturnedType();
 
         String identifier = token.getContent();
         accept(TokenType.IDENTIFIER);
@@ -72,26 +72,34 @@ public class Parser {
 
     }
 
-    private TokenType parseReturnedType() throws Exception {
-        TokenType type = token.getTokenType();
+    private MyType parseReturnedType() throws Exception {
+        TokenType type;
+        MyType myType;
+        boolean isArray = false;
         switch (token.getTokenType()) {
+            case ARRAY_OPEN:
+                accept(token.getTokenType());
+                accept(TokenType.ARRAY_CLOSE);
+                isArray = true;
+                if(tokenIs(TokenType.INT_TYPE, TokenType.DOUBLE_TYPE)){
+                    type = token.getTokenType();
+                    accept(token.getTokenType());
+                } else throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE});
+                break;
             case INT_TYPE:
-                accept(TokenType.INT_TYPE);
-                break;
             case DOUBLE_TYPE:
-                accept(TokenType.DOUBLE_TYPE);
-                break;
-            case VOID:
-                accept(TokenType.VOID);
+                type = token.getTokenType();
+                accept(token.getTokenType());
                 break;
             default:
-                throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE, TokenType.VOID});
+                throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE, TokenType.ARRAY_OPEN});
         }
 
-        return type;
+        myType = new MyType(isArray, type);
+        return myType;
     }
 
-    private BodyBlock parseFunctionBody(TokenType functionType) throws Exception {
+    private BodyBlock parseFunctionBody(MyType functionType) throws Exception {
         BodyBlock bodyBlock = new BodyBlock();
         boolean parsedReturn = false;
 
@@ -103,11 +111,9 @@ public class Parser {
                     bodyBlock.addInstruction(parseIf());
                     break;
                 case RETURN:
-                    if (functionType != TokenType.VOID) {
-                        bodyBlock.addInstruction(parseReturn());
-                        parsedReturn = true;
-                    } else
-                        throw new Exception("Unexpected return statement at line " + token.getTextPosition().getLineNumber() + " and char " + token.getTextPosition().getCharacterNumber());
+                    bodyBlock.addInstruction(parseReturn());
+                    parsedReturn = true;
+
                     break;
                 case IDENTIFIER:
                     bodyBlock.addInstruction(parseFunctionCall());
@@ -115,7 +121,7 @@ public class Parser {
                     break;
                 case FUNCTION_DECL:
                     accept(TokenType.FUNCTION_DECL);
-                    TokenType type = parseReturnedType();
+                    MyType type = parseReturnedType();
                     String identifier = token.getContent();
                     accept(TokenType.IDENTIFIER);
                     accept(TokenType.ASSIGN_OPERATOR);
@@ -132,7 +138,7 @@ public class Parser {
                     break;
             }
         }
-        if (functionType != TokenType.IF && functionType != TokenType.ELSIF && functionType != TokenType.ELSE && functionType != TokenType.VOID && !parsedReturn) {
+        if (functionType.getType() != TokenType.IF && functionType.getType() != TokenType.ELSIF && functionType.getType() != TokenType.ELSE && !parsedReturn) {
             throw new ParserException(token, new TokenType[]{TokenType.RETURN});
         }
         accept(TokenType.BRACKET_CLOSE);
@@ -192,7 +198,7 @@ public class Parser {
         accept(TokenType.PARENTHESIS_OPEN);
         ifStatement.setCondition(parseCondition());
         accept(TokenType.PARENTHESIS_CLOSE);
-        ifStatement.setThenBlock(parseFunctionBody(TokenType.IF));
+        ifStatement.setThenBlock(parseFunctionBody(new MyType(false,TokenType.IF)));
         boolean foundElse = false;
         while (!foundElse && (token.getTokenType() == TokenType.ELSE || token.getTokenType() == TokenType.ELSIF)) {
             switch (token.getTokenType()) {
@@ -201,11 +207,11 @@ public class Parser {
                     accept(TokenType.PARENTHESIS_OPEN);
                     Condition condition = parseCondition();
                     accept(TokenType.PARENTHESIS_CLOSE);
-                    ifStatement.addElseIf(condition, parseFunctionBody(TokenType.ELSIF));
+                    ifStatement.addElseIf(condition, parseFunctionBody(new MyType(false,TokenType.ELSIF)));
                     break;
                 case ELSE:
                     accept(TokenType.ELSE);
-                    ifStatement.setElseBlock(parseFunctionBody(TokenType.ELSE));
+                    ifStatement.setElseBlock(parseFunctionBody(new MyType(false,TokenType.ELSE)));
                     foundElse = true;
                     break;
                 default:
@@ -296,26 +302,16 @@ public class Parser {
 
     private ArrayList<Parameter> parseFunctionParameters() throws Exception {
         ArrayList<Parameter> parameters = new ArrayList<>();
-        String name;
 
         while (token.getTokenType() != TokenType.PARENTHESIS_CLOSE) {
             switch (token.getTokenType()) {
                 case INT_TYPE:
-                    accept(TokenType.INT_TYPE);
-                    accept(TokenType.PARAMETER_TYPE);
-                    name = token.getContent();
-                    accept(TokenType.IDENTIFIER);
-                    parameters.add(new Parameter(TokenType.INT_TYPE, name));
-                    break;
                 case DOUBLE_TYPE:
-                    accept(TokenType.DOUBLE_TYPE);
-                    accept(TokenType.PARAMETER_TYPE);
-                    name = token.getContent();
-                    accept(TokenType.IDENTIFIER);
-                    parameters.add(new Parameter(TokenType.DOUBLE_TYPE, name));
+                case ARRAY_OPEN:
+                    parameters.add(parseOneParameter(token.getTokenType()));
                     break;
                 default:
-                    throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE, TokenType.PARENTHESIS_CLOSE});
+                    throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE, TokenType.ARRAY_OPEN, TokenType.PARENTHESIS_CLOSE});
             }
             if (token.getTokenType().equals(TokenType.COMMA)) {
                 accept(TokenType.COMMA);
@@ -325,24 +321,54 @@ public class Parser {
         return parameters;
     }
 
-    private Node parseFunctionAssignment(String identifier, TokenType returnType) throws Exception {
-        return new FunctionAssignment(identifier, parseExpression(), returnType);
+    private Parameter parseOneParameter(TokenType tokenType) throws Exception {
+        String name;
+        boolean array = false;
+        accept(tokenType);
+        if(tokenType == TokenType.ARRAY_OPEN) {
+            accept(TokenType.ARRAY_CLOSE);
+            switch (token.getTokenType()) {
+                case INT_TYPE:
+                case DOUBLE_TYPE:
+                    tokenType = token.getTokenType();
+                    accept(tokenType);
+                    array = true;
+                    break;
+                default:
+                    throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE});
+            }
+        }
+        accept(TokenType.PARAMETER_TYPE);
+        name = token.getContent();
+        accept(TokenType.IDENTIFIER);
+        return new Parameter(new MyType(array,tokenType), name);
+    }
+
+    private Node parseFunctionAssignment(String identifier, MyType returnType) throws Exception {
+        Expression expression;
+
+        if(token.getTokenType() == TokenType.ARRAY_OPEN){
+            expression = new Expression();
+            expression.addOperand(parseArrayInit(returnType));
+            returnType.setArray(true);
+        } else {
+            expression = parseExpression();
+        }
+
+        return new FunctionAssignment(identifier, expression, returnType);
     }
 
     private Expression parseExpression() throws Exception {
         Expression expression = new Expression();
+
         expression.addOperand(parseMultiplicativeExpression());
 
         while (tokenIs(TokenType.ADD_OPERATOR, TokenType.SUBSTRACT_OPERATOR, TokenType.SEMICOLON, TokenType.IDENTIFIER)) {
             switch (token.getTokenType()) {
                 case ADD_OPERATOR:
-                    accept(TokenType.ADD_OPERATOR);
-                    expression.addOperator(TokenType.ADD_OPERATOR);
-                    expression.addOperand(parseMultiplicativeExpression());
-                    break;
                 case SUBSTRACT_OPERATOR:
-                    accept(TokenType.SUBSTRACT_OPERATOR);
-                    expression.addOperator(TokenType.SUBSTRACT_OPERATOR);
+                    accept(token.getTokenType());
+                    expression.addOperator(token.getTokenType());
                     expression.addOperand(parseMultiplicativeExpression());
                     break;
                 case SEMICOLON:
@@ -356,6 +382,21 @@ public class Parser {
         }
 
         return expression;
+    }
+
+    private Array parseArrayInit(MyType returnType) throws Exception {
+        Array array = new Array(returnType.getType());
+        accept(TokenType.ARRAY_OPEN);
+        while(tokenIs(TokenType.INTEGER, TokenType.DOUBLE)){
+            array.addElement(parseLiteral());
+            if(token.getTokenType() == TokenType.COMMA){
+                accept(TokenType.COMMA);
+            } else {
+                break;
+            }
+        }
+        accept(TokenType.ARRAY_CLOSE);
+        return array;
     }
 
     private boolean tokenIs(TokenType... tokenTypes) {

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 public class Program {
     private ArrayList<Node> statements;
 
-
     public Program() {
         this.statements = new ArrayList<>();
     }

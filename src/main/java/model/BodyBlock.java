@@ -5,7 +5,7 @@ import java.util.List;
 
 public class BodyBlock extends Node {
 
-    public List<Node> instructions = new ArrayList<>();
+    private List<Node> instructions = new ArrayList<>();
 
     public void addInstruction(Node instruction){
         this.instructions.add(instruction);

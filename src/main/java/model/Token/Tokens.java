@@ -7,7 +7,6 @@ import static model.Token.TokenType.*;
 public class Tokens {
     public static final HashMap<String, TokenType> KEYWORDS = new HashMap<String, TokenType>() {{
         put("def", FUNCTION_DECL);
-        put("void", VOID);
         put("if", IF);
         put("elsif", ELSIF);
         put("else", ELSE);

@@ -5,16 +5,28 @@ import model.Token.TokenType;
 import java.util.List;
 
 public class FunctionDeclaration extends Node {
-    String identifier;
-    TokenType returnType;
-    List<Parameter> parameters;
-    BodyBlock bodyBlock;
+    private String identifier;
+    private MyType returnType;
+    private List<Parameter> parameters;
+    private BodyBlock bodyBlock;
 
-    public FunctionDeclaration(String identifier, TokenType returnType, List<Parameter> parameters, BodyBlock bodyBlock) {
+    public FunctionDeclaration(String identifier, MyType returnType, List<Parameter> parameters, BodyBlock bodyBlock) {
         this.identifier = identifier;
         this.returnType = returnType;
         this.parameters = parameters;
         this.bodyBlock = bodyBlock;
+    }
+
+    public MyType getReturnType() {
+        return returnType;
+    }
+
+    public List<Parameter> getParameters() {
+        return parameters;
+    }
+
+    public BodyBlock getBodyBlock() {
+        return bodyBlock;
     }
 
     @Override
@@ -30,9 +42,7 @@ public class FunctionDeclaration extends Node {
         stringBuilder.append(identifier);
         stringBuilder.append("( ");
         for(int i = 0; i < parameters.size(); i++) {
-            stringBuilder.append(parameters.get(i).getType());
-            stringBuilder.append(": ");
-            stringBuilder.append(parameters.get(i).getName());
+            stringBuilder.append(parameters.get(i).toString());
             if( i != parameters.size() - 1 ) stringBuilder.append(", ");
         }
         stringBuilder.append(")");
