@@ -99,7 +99,7 @@ public class Parser {
             case INT_TYPE:
             case DOUBLE_TYPE:
                 type = token.getTokenType();
-                accept(token.getTokenType());
+                accept(type);
                 break;
             default:
                 throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE, TokenType.ARRAY_OPEN});
@@ -284,7 +284,7 @@ public class Parser {
     private Node parseRelationalCondition() throws Exception {
         Condition condition = new Condition();
 
-        condition.addOperand(parsePrimaryExpression());
+        condition.addOperand(parseExpression());
         while ( token.getTokenType() == TokenType.LESS_OPERATOR || token.getTokenType() == TokenType.LESS_EQUALS_OPERATOR ||
                 token.getTokenType() == TokenType.GREATER_OPERATOR || token.getTokenType() == TokenType.GREATER_EQUALS_OPERATOR) {
             TokenType currentTokenType = token.getTokenType();
@@ -305,7 +305,7 @@ public class Parser {
                     throw new ParserException(token, new TokenType[]{TokenType.LESS_EQUALS_OPERATOR, TokenType.LESS_OPERATOR, TokenType.GREATER_OPERATOR, TokenType.GREATER_EQUALS_OPERATOR});
             }
             condition.addOperator(currentTokenType);
-            condition.addOperand(parsePrimaryExpression());
+            condition.addOperand(parseExpression());
         }
         return condition;
     }
@@ -378,8 +378,9 @@ public class Parser {
             switch (token.getTokenType()) {
                 case ADD_OPERATOR:
                 case SUBSTRACT_OPERATOR:
-                    accept(token.getTokenType());
-                    expression.addOperator(token.getTokenType());
+                    TokenType tokenType = token.getTokenType();
+                    accept(tokenType);
+                    expression.addOperator(tokenType);
                     expression.addOperand(parseMultiplicativeExpression());
                     break;
                 case SEMICOLON:
@@ -427,13 +428,10 @@ public class Parser {
         while (tokenIs(TokenType.MULTIPLY_OPERATOR, TokenType.DIVIDE_OPERATOR)) {
             switch (token.getTokenType()) {
                 case MULTIPLY_OPERATOR:
-                    accept(TokenType.MULTIPLY_OPERATOR);
-                    expression.addOperator(TokenType.MULTIPLY_OPERATOR);
-                    expression.addOperand(parsePrimaryExpression());
-                    break;
                 case DIVIDE_OPERATOR:
-                    accept(TokenType.DIVIDE_OPERATOR);
-                    expression.addOperator(TokenType.DIVIDE_OPERATOR);
+                    TokenType tokenType = token.getTokenType();
+                    accept(tokenType);
+                    expression.addOperator(tokenType);
                     expression.addOperand(parsePrimaryExpression());
                     break;
                 case SEMICOLON:

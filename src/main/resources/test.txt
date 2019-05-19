@@ -4,11 +4,11 @@
 //def Int x(Int[]:y);
 
 
-def Int x = y + 4;
+def Int x = 2 + 4 * 2 / 3;
 
 def Int y = -2;
 
-if( 4 > 3 ) {
+if( 4 * 2 / 2 + 1 > 3 && 1 > (2 + 1)*3 || 1 < 2) {
 
 } elsif( 1 ){
 } else {
@@ -19,14 +19,14 @@ def Int s(Int: a, Double: b){
     def Int y = x;
     def Int s = x(y + 4);
 
-    if( 4 > 3 ) {
+    if(  3 > 3 ) {
     }
 
     return 4+5;
 };
 
-def Int x([]Int: a){
+def Int z([]Int: a){
     return 4;
 }
 
-def []Double y = [1.2 , 3, 4.2];
+def []Double a = [1.2 , 3, 4.2];
