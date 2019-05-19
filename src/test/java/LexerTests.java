@@ -144,6 +144,22 @@ public class LexerTests {
         assertEquals("token's type should be END", TokenType.END, token.getTokenType());
     }
 
+    @Test
+    public void isReturningArrayOpenToken() throws Exception {
+        String text = "[";
+        Token token = getTokenFromString(text);
+        assertEquals("token's content should be [", "[", token.getContent());
+        assertEquals("token's type should be ARRAY_OPEN", TokenType.ARRAY_OPEN, token.getTokenType());
+    }
+
+    @Test
+    public void isReturningArrayCloseToken() throws Exception {
+        String text = "]";
+        Token token = getTokenFromString(text);
+        assertEquals("token's content should be ]", "]", token.getContent());
+        assertEquals("token's type should be ARRAY_CLOSE", TokenType.ARRAY_CLOSE, token.getTokenType());
+    }
+
 
     private Token getTokenFromString(String string) throws Exception {
         Lexer lexer = new Lexer(convertStringToInputStreamReader(string));

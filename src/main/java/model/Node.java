@@ -1,10 +1,8 @@
 package model;
 
 public abstract class Node {
-    protected Node parent;
 
     public enum Type {
-        Assignment,
         FunctionCall,
         Condition,
         Integer,
@@ -13,13 +11,8 @@ public abstract class Node {
         FunctionDeclaration,
         FunctionAssignment,
         IfStatement,
-        Program,
         Return,
         BodyBlock,
-        VarDeclaration,
-        Literal,
-        Variable,
-        WhileStatement
     }
 
     public abstract Type getType();

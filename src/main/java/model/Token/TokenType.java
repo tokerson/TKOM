@@ -21,7 +21,6 @@ public enum TokenType {
     DIVIDE_OPERATOR,
     DOUBLE,
     END,
-    VOID,
     IF,
     ELSIF,
     ELSE,

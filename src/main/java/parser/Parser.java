@@ -81,11 +81,8 @@ public class Parser {
             case DOUBLE_TYPE:
                 accept(TokenType.DOUBLE_TYPE);
                 break;
-            case VOID:
-                accept(TokenType.VOID);
-                break;
             default:
-                throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE, TokenType.VOID});
+                throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE});
         }
 
         return type;
@@ -103,11 +100,9 @@ public class Parser {
                     bodyBlock.addInstruction(parseIf());
                     break;
                 case RETURN:
-                    if (functionType != TokenType.VOID) {
-                        bodyBlock.addInstruction(parseReturn());
-                        parsedReturn = true;
-                    } else
-                        throw new Exception("Unexpected return statement at line " + token.getTextPosition().getLineNumber() + " and char " + token.getTextPosition().getCharacterNumber());
+                    bodyBlock.addInstruction(parseReturn());
+                    parsedReturn = true;
+
                     break;
                 case IDENTIFIER:
                     bodyBlock.addInstruction(parseFunctionCall());
@@ -132,7 +127,7 @@ public class Parser {
                     break;
             }
         }
-        if (functionType != TokenType.IF && functionType != TokenType.ELSIF && functionType != TokenType.ELSE && functionType != TokenType.VOID && !parsedReturn) {
+        if (functionType != TokenType.IF && functionType != TokenType.ELSIF && functionType != TokenType.ELSE && !parsedReturn) {
             throw new ParserException(token, new TokenType[]{TokenType.RETURN});
         }
         accept(TokenType.BRACKET_CLOSE);
@@ -296,26 +291,16 @@ public class Parser {
 
     private ArrayList<Parameter> parseFunctionParameters() throws Exception {
         ArrayList<Parameter> parameters = new ArrayList<>();
-        String name;
 
         while (token.getTokenType() != TokenType.PARENTHESIS_CLOSE) {
             switch (token.getTokenType()) {
                 case INT_TYPE:
-                    accept(TokenType.INT_TYPE);
-                    accept(TokenType.PARAMETER_TYPE);
-                    name = token.getContent();
-                    accept(TokenType.IDENTIFIER);
-                    parameters.add(new Parameter(TokenType.INT_TYPE, name));
-                    break;
                 case DOUBLE_TYPE:
-                    accept(TokenType.DOUBLE_TYPE);
-                    accept(TokenType.PARAMETER_TYPE);
-                    name = token.getContent();
-                    accept(TokenType.IDENTIFIER);
-                    parameters.add(new Parameter(TokenType.DOUBLE_TYPE, name));
+                case ARRAY_OPEN:
+                    parameters.add(parseOneParameter(token.getTokenType()));
                     break;
                 default:
-                    throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE, TokenType.PARENTHESIS_CLOSE});
+                    throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE, TokenType.ARRAY_OPEN, TokenType.PARENTHESIS_CLOSE});
             }
             if (token.getTokenType().equals(TokenType.COMMA)) {
                 accept(TokenType.COMMA);
@@ -323,6 +308,31 @@ public class Parser {
         }
         accept(TokenType.PARENTHESIS_CLOSE);
         return parameters;
+    }
+
+
+
+    private Parameter parseOneParameter(TokenType tokenType) throws Exception {
+        String name;
+        boolean array = false;
+        accept(tokenType);
+        if(tokenType == TokenType.ARRAY_OPEN) {
+            accept(TokenType.ARRAY_CLOSE);
+            switch (token.getTokenType()) {
+                case INT_TYPE:
+                case DOUBLE_TYPE:
+                    tokenType = token.getTokenType();
+                    accept(tokenType);
+                    array = true;
+                    break;
+                default:
+                    throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE});
+            }
+        }
+        accept(TokenType.PARAMETER_TYPE);
+        name = token.getContent();
+        accept(TokenType.IDENTIFIER);
+        return new Parameter(tokenType, name, array);
     }
 
     private Node parseFunctionAssignment(String identifier, TokenType returnType) throws Exception {
