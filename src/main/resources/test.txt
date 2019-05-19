@@ -17,10 +17,9 @@ if( 4 > 3 ) {
 def Int s(Int: a, Double: b){
     def Int x = 4 + 1 * 3;
     def Int y = x;
-    def Int y = x(y + 4);
+    def Int s = x(y + 4);
 
     if( 4 > 3 ) {
-
     }
 
     return 4+5;

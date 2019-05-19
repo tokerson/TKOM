@@ -125,7 +125,7 @@ public class ParserTests {
 
     @Test
     public void isParsingFunctionParametersCorrectly() throws Exception {
-        String text = "def Double x(Int: x, Double: y){" +
+        String text = "def Double x(Int: z, Double: y){" +
                 "return 4.2;" +
                 "}";
         Program program = parse(text);
@@ -137,7 +137,7 @@ public class ParserTests {
 
     @Test
     public void isParsingFunctionParametersCorrectlyIfTheyAreArray() throws Exception {
-        String text = "def Double x([]Int: x){" +
+        String text = "def Double x([]Int: y){" +
                 "return 4.2;" +
                 "}";
         Program program = parse(text);
@@ -176,14 +176,14 @@ public class ParserTests {
 
     @Test(expected = Exception.class)
     public void isThrowingAnExceptionWhenFunctionDeclarationHasParameterAsArrayWithoutType() throws Exception {
-        String text = "def Int x([]:x){return 0;}";
+        String text = "def Int x([]:a){return 0;}";
         Program program = parse(text);
     }
 
     @Test(expected = Exception.class)
     public void isThrowingAnExceptionWhenGivenAFunctionWithNestedFunctionAssignmentAndNoReturnStatement() throws Exception {
         String text = "def Double x(){" +
-                "def Int x = 4;" +
+                "def Int y = 4;" +
                 "}";
         Program program = parse(text);
     }
@@ -230,6 +230,38 @@ public class ParserTests {
     @Test(expected = ParserException.class)
     public void isThrowingExceptionWhenElsifIsAfterElseStatements() throws Exception {
         String text = "if(4 > 2){}\nelse{}\nelseif( 1 == 1 ){}";
+        Program program = parse(text);
+    }
+
+    @Test(expected = Exception.class)
+    public void isThrowingAnExceptionWhenTwoFunctionsWithTheSameNameAreDeclaredInTheMainScope() throws Exception {
+        String text = "def Int x = 4;\n" +
+                "def Int x = 2";
+        Program program = parse(text);
+    }
+
+    @Test(expected = Exception.class)
+    public void isThrowingAnExceptionWhenTwoFunctionsWithTheSameNameAreDeclaredInTheSameScope() throws Exception {
+        String text = "def Int x(){\n" +
+                "def Int y = 4;\n" +
+                "def Int y = 2;\n" +
+                "return 2;}";
+        Program program = parse(text);
+    }
+
+    @Test(expected = Exception.class)
+    public void isThrowingAnExceptionWhenFunctionIsDeclaredInTheScopeButIsInParametersAsWell() throws Exception {
+        String text = "def Int x(Int:y){\n" +
+                "def Int y = 4;\n" +
+                "return 2;}";
+        Program program = parse(text);
+    }
+
+    @Test
+    public void isParsingFunctionDeclarationCorrectlyWhenThereIsARedeclarationOfFunctionWithTheSameName() throws Exception {
+        String text = "def Int x(Int:y){\n" +
+                "def Int x = 4;\n" +
+                "return 2;}";
         Program program = parse(text);
     }
 

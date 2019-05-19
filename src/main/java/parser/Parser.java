@@ -27,42 +27,45 @@ public class Parser {
         Node parsedStatement = null;
         token = lexer.getNextToken();
 
-        while ((parsedStatement = parseInstruction()) != null) {
+        while ((parsedStatement = parseInstruction(scope)) != null) {
             program.add(parsedStatement);
         }
 
         return program;
     }
 
-    private Node parseInstruction() throws Exception {
+    private Node parseInstruction(Scope scope) throws Exception {
 
         switch (token.getTokenType()) {
             case END:
                 return null;
             case FUNCTION_DECL:
                 accept(TokenType.FUNCTION_DECL);
-                return parseFunctionDeclaration();
+                return parseFunctionDeclaration(scope);
             case SEMICOLON:
                 accept(TokenType.SEMICOLON);
-                return parseInstruction();
+                return parseInstruction(scope);
             case IF:
-                return parseIf();
+                return parseIf(scope);
             default:
                 throw new ParserException(token, new TokenType[]{TokenType.END, TokenType.FUNCTION_DECL, TokenType.IF});
         }
     }
 
-    private Node parseFunctionDeclaration() throws Exception {
+    private Node parseFunctionDeclaration(Scope scope) throws Exception {
         FunctionDeclaration functionDeclaration;
         MyType type = parseReturnedType();
 
         String identifier = token.getContent();
+        addToScope(scope, identifier);
         accept(TokenType.IDENTIFIER);
 
         switch (token.getTokenType()) {
             case PARENTHESIS_OPEN:
                 accept(TokenType.PARENTHESIS_OPEN);
-                functionDeclaration = new FunctionDeclaration(identifier, type, parseFunctionParameters(), parseFunctionBody(type));
+                functionDeclaration = new FunctionDeclaration(identifier, type);
+                functionDeclaration.setParameters(parseFunctionParameters(functionDeclaration.getScope()));
+                functionDeclaration.setBodyBlock(parseFunctionBody(functionDeclaration.getScope(),type));
                 return functionDeclaration;
             case ASSIGN_OPERATOR:
                 accept(TokenType.ASSIGN_OPERATOR);
@@ -71,6 +74,12 @@ public class Parser {
                 throw new ParserException(token, new TokenType[]{TokenType.ASSIGN_OPERATOR, TokenType.PARENTHESIS_OPEN});
         }
 
+    }
+
+    private void addToScope(Scope scope, String identifier) throws Exception {
+        if(!scope.addToScope(identifier)){
+            throw new Exception("Redefinition of function " + identifier + " at line: " +token.getTextPosition().getLineNumber() + " and char: " + token.getTextPosition().getCharacterNumber() + " within same scope");
+        }
     }
 
     private MyType parseReturnedType() throws Exception {
@@ -100,7 +109,7 @@ public class Parser {
         return myType;
     }
 
-    private BodyBlock parseFunctionBody(MyType functionType) throws Exception {
+    private BodyBlock parseFunctionBody(Scope scope, MyType functionType) throws Exception {
         BodyBlock bodyBlock = new BodyBlock();
         boolean parsedReturn = false;
 
@@ -109,12 +118,11 @@ public class Parser {
         while (!endOfBlock) {
             switch (token.getTokenType()) {
                 case IF:
-                    bodyBlock.addInstruction(parseIf());
+                    bodyBlock.addInstruction(parseIf(scope));
                     break;
                 case RETURN:
                     bodyBlock.addInstruction(parseReturn());
                     parsedReturn = true;
-
                     break;
                 case IDENTIFIER:
                     bodyBlock.addInstruction(parseFunctionCall());
@@ -124,6 +132,7 @@ public class Parser {
                     accept(TokenType.FUNCTION_DECL);
                     MyType type = parseReturnedType();
                     String identifier = token.getContent();
+                    addToScope(scope,identifier);
                     accept(TokenType.IDENTIFIER);
                     accept(TokenType.ASSIGN_OPERATOR);
                     bodyBlock.addInstruction(parseFunctionAssignment(identifier, type));
@@ -192,14 +201,14 @@ public class Parser {
         return returnStatement;
     }
 
-    private Node parseIf() throws Exception {
+    private Node parseIf(Scope scope) throws Exception {
         IfStatement ifStatement = new IfStatement();
 
         accept(TokenType.IF);
         accept(TokenType.PARENTHESIS_OPEN);
         ifStatement.setCondition(parseCondition());
         accept(TokenType.PARENTHESIS_CLOSE);
-        ifStatement.setThenBlock(parseFunctionBody(new MyType(false,TokenType.IF)));
+        ifStatement.setThenBlock(parseFunctionBody(scope, new MyType(false,TokenType.IF)));
         boolean foundElse = false;
         while (!foundElse && (token.getTokenType() == TokenType.ELSE || token.getTokenType() == TokenType.ELSIF)) {
             switch (token.getTokenType()) {
@@ -208,11 +217,11 @@ public class Parser {
                     accept(TokenType.PARENTHESIS_OPEN);
                     Condition condition = parseCondition();
                     accept(TokenType.PARENTHESIS_CLOSE);
-                    ifStatement.addElseIf(condition, parseFunctionBody(new MyType(false,TokenType.ELSIF)));
+                    ifStatement.addElseIf(condition, parseFunctionBody(scope, new MyType(false,TokenType.ELSIF)));
                     break;
                 case ELSE:
                     accept(TokenType.ELSE);
-                    ifStatement.setElseBlock(parseFunctionBody(new MyType(false,TokenType.ELSE)));
+                    ifStatement.setElseBlock(parseFunctionBody(scope, new MyType(false,TokenType.ELSE)));
                     foundElse = true;
                     break;
                 default:
@@ -301,7 +310,7 @@ public class Parser {
         return condition;
     }
 
-    private ArrayList<Parameter> parseFunctionParameters() throws Exception {
+    private ArrayList<Parameter> parseFunctionParameters(Scope scope) throws Exception {
         ArrayList<Parameter> parameters = new ArrayList<>();
 
         while (token.getTokenType() != TokenType.PARENTHESIS_CLOSE) {
@@ -309,7 +318,7 @@ public class Parser {
                 case INT_TYPE:
                 case DOUBLE_TYPE:
                 case ARRAY_OPEN:
-                    parameters.add(parseOneParameter(token.getTokenType()));
+                    parameters.add(parseOneParameter(scope,token.getTokenType()));
                     break;
                 default:
                     throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE, TokenType.ARRAY_OPEN, TokenType.PARENTHESIS_CLOSE});
@@ -322,7 +331,7 @@ public class Parser {
         return parameters;
     }
 
-    private Parameter parseOneParameter(TokenType tokenType) throws Exception {
+    private Parameter parseOneParameter(Scope scope, TokenType tokenType) throws Exception {
         String name;
         boolean array = false;
         accept(tokenType);
@@ -341,6 +350,7 @@ public class Parser {
         }
         accept(TokenType.PARAMETER_TYPE);
         name = token.getContent();
+        addToScope(scope,name);
         accept(TokenType.IDENTIFIER);
         return new Parameter(new MyType(array,tokenType), name);
     }

@@ -9,13 +9,11 @@ public class FunctionDeclaration extends Node implements Function{
     private MyType returnType;
     private List<Parameter> parameters;
     private BodyBlock bodyBlock;
-    private Scope scope;
+    private Scope scope = new Scope();
 
-    public FunctionDeclaration(String identifier, MyType returnType, List<Parameter> parameters, BodyBlock bodyBlock) {
+    public FunctionDeclaration(String identifier, MyType returnType) {
         this.identifier = identifier;
         this.returnType = returnType;
-        this.parameters = parameters;
-        this.bodyBlock = bodyBlock;
     }
 
     public MyType getReturnType() {
@@ -24,6 +22,14 @@ public class FunctionDeclaration extends Node implements Function{
 
     public List<Parameter> getParameters() {
         return parameters;
+    }
+
+    public void setParameters(List<Parameter> parameters) {
+        this.parameters = parameters;
+    }
+
+    public void setBodyBlock(BodyBlock bodyBlock) {
+        this.bodyBlock = bodyBlock;
     }
 
     public BodyBlock getBodyBlock() {
