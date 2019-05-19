@@ -2,11 +2,14 @@ package model.Program;
 
 import model.Instruction;
 import model.Node;
+import model.Scope;
 
 import java.util.ArrayList;
 
 public class Program {
     private ArrayList<Node> statements;
+
+    private Scope scope = new Scope();
 
     public Program() {
         this.statements = new ArrayList<>();
@@ -22,5 +25,13 @@ public class Program {
 
     public void add(Node statement) {
         statements.add(statement);
+    }
+
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
     }
 }

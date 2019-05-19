@@ -15,14 +15,15 @@ public class Parser {
     private final Lexer lexer;
     private Token token;
     private Program program;
+    private Scope scope;
 
     public Parser(Lexer lexer) {
         this.lexer = lexer;
     }
 
-
     public Program parse() throws Exception {
         program = new Program();
+        scope = program.getScope();
         Node parsedStatement = null;
         token = lexer.getNextToken();
 

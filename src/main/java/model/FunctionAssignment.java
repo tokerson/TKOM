@@ -2,10 +2,11 @@ package model;
 
 import model.Token.TokenType;
 
-public class FunctionAssignment extends Node {
+public class FunctionAssignment extends Node implements Function {
     private String identifier;
     private Expression expression;
     private MyType returnType;
+    private Scope scope;
 
     public FunctionAssignment(String identifier, Expression expression, MyType returnType) {
         this.identifier = identifier;
@@ -19,6 +20,14 @@ public class FunctionAssignment extends Node {
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
     }
 
     @Override
@@ -35,5 +44,10 @@ public class FunctionAssignment extends Node {
         stringBuilder.append(" = ");
         stringBuilder.append(expression.toString());
         return stringBuilder.toString();
+    }
+
+    @Override
+    public String getName() {
+        return identifier;
     }
 }

@@ -4,11 +4,12 @@ import model.Token.TokenType;
 
 import java.util.List;
 
-public class FunctionDeclaration extends Node {
+public class FunctionDeclaration extends Node implements Function{
     private String identifier;
     private MyType returnType;
     private List<Parameter> parameters;
     private BodyBlock bodyBlock;
+    private Scope scope;
 
     public FunctionDeclaration(String identifier, MyType returnType, List<Parameter> parameters, BodyBlock bodyBlock) {
         this.identifier = identifier;
@@ -27,6 +28,14 @@ public class FunctionDeclaration extends Node {
 
     public BodyBlock getBodyBlock() {
         return bodyBlock;
+    }
+
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
     }
 
     @Override
@@ -49,5 +58,10 @@ public class FunctionDeclaration extends Node {
         stringBuilder.append(bodyBlock) ;
 
         return stringBuilder.toString();
+    }
+
+    @Override
+    public String getName() {
+        return identifier;
     }
 }

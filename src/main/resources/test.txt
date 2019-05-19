@@ -4,7 +4,7 @@
 //def Int x(Int[]:y);
 
 
-def Int x = 4;
+def Int x = y + 4;
 
 def Int y = -2;
 
