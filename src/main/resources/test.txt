@@ -26,6 +26,6 @@ def Int s(Int: a, Double: b){
     return 4+5;
 };
 
-def Int x(){
+def Int x([]Int: a){
     return 4;
 }

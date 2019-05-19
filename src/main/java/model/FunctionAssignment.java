@@ -5,10 +5,10 @@ import model.Token.TokenType;
 public class FunctionAssignment extends Node {
     private String identifier;
     private Expression expression;
-    private TokenType returnType;
+    private MyType returnType;
 
 
-    public FunctionAssignment(String identifier, Expression expression, TokenType returnType) {
+    public FunctionAssignment(String identifier, Expression expression, MyType returnType) {
         this.identifier = identifier;
         this.expression = expression;
         this.returnType = returnType;

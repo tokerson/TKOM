@@ -146,6 +146,16 @@ public class ParserTests {
         assertEquals("First parameter should be", true,functionDeclaration.getParameters().get(0).isArray());
     }
 
+//    @Test
+//    public void isParsingFunctionAssignmentToArray() throws Exception {
+//        String text = "def []Int x = [";
+//        Program program = parse(text);
+//        assertEquals("First statement should be", Node.Type.FunctionDeclaration,program.getStatement(0).getType());
+//        FunctionDeclaration functionDeclaration = (FunctionDeclaration) program.getStatement(0);
+//        assertEquals("First parameter should be", TokenType.INT_TYPE,functionDeclaration.getParameters().get(0).getType());
+//        assertEquals("First parameter should be", true,functionDeclaration.getParameters().get(0).isArray());
+//    }
+
     @Test(expected = Exception.class)
     public void isThrowingAnExceptionWhenGivenAFunctionWithNestedFunctionAssignmentAndNoReturnStatement() throws Exception {
         String text = "def Double x(){" +
