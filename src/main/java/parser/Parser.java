@@ -72,7 +72,9 @@ public class Parser {
                 return functionDeclaration;
             case ASSIGN_OPERATOR:
                 accept(TokenType.ASSIGN_OPERATOR);
-                return parseFunctionAssignment(identifier, type);
+                FunctionAssignment functionAssignment = parseFunctionAssignment(identifier, type);
+                functionAssignment.setParentScope(scope);
+                return functionAssignment;
             default:
                 throw new ParserException(token, new TokenType[]{TokenType.ASSIGN_OPERATOR, TokenType.PARENTHESIS_OPEN});
         }
@@ -363,7 +365,7 @@ public class Parser {
         return new Parameter(type, name);
     }
 
-    private Node parseFunctionAssignment(String identifier, MyType returnType) throws Exception {
+    private FunctionAssignment parseFunctionAssignment(String identifier, MyType returnType) throws Exception {
         Expression expression;
 
         if(token.getTokenType() == TokenType.ARRAY_OPEN){

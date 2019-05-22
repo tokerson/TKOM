@@ -6,7 +6,7 @@ public class FunctionAssignment extends Node implements Function {
     private String identifier;
     private Expression expression;
     private MyType returnType;
-    private Scope scope;
+    private Scope scope = new Scope();
 
     public FunctionAssignment(String identifier, Expression expression, MyType returnType) {
         this.identifier = identifier;
@@ -28,6 +28,10 @@ public class FunctionAssignment extends Node implements Function {
 
     public void setScope(Scope scope) {
         this.scope = scope;
+    }
+
+    public void setParentScope(Scope scope){
+        this.scope.setParentScope(scope);
     }
 
     @Override
