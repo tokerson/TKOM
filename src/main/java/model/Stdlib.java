@@ -9,19 +9,19 @@ import java.util.List;
 public class Stdlib {
     public static FunctionCall print = new FunctionCall("print"){
         @Override
-        public Node execute(Scope scope){
-            System.out.println(this.getArguments().get(0));
+        public Executable execute(Scope scope) throws MyRunTimeException {
+            System.out.println(this.getArguments().get(0).execute(scope));
             return null;
         }
     };
 
     public static FunctionCall head = new FunctionCall("head"){
         @Override
-        public Node execute(Scope scope) throws MyRunTimeException {
+        public Literal execute(Scope scope) throws MyRunTimeException {
             if(this.getArguments().size() > 0){
-                Node array = this.getArguments().get(0);
+                Executable array = this.getArguments().get(0);
                 if( array instanceof Array){
-                    List<Node> elements = ((Array) array).getElements();
+                    List<Literal> elements = ((Array) array).getElements();
                     if(elements.size() > 0){
                         return elements.get(0);
                     } else throw new MyRunTimeException("head's list cannot be empty ");
@@ -32,11 +32,11 @@ public class Stdlib {
 
     public static FunctionCall tail = new FunctionCall("tail"){
         @Override
-        public Node execute(Scope scope) throws MyRunTimeException {
+        public Array execute(Scope scope) throws MyRunTimeException {
             if(this.getArguments().size() > 0){
-                Node array = this.getArguments().get(0);
+                Executable array = this.getArguments().get(0);
                 if( array instanceof Array){
-                    List<Node> elements = ((Array) array).getElements();
+                    List<Literal> elements = ((Array) array).getElements();
                     if(elements.size() > 0){
                         Array arrayToReturn = new Array(((Array) array).getElementsType());
                         for(int i = 1; i < elements.size();++i){

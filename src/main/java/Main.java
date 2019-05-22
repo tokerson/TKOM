@@ -28,6 +28,11 @@ public class Main {
         Program program;
         try {
             program = parser.parse();
+//            Node statement = program.getStatement(0);
+//            for(Node statement: program.getStatements()){
+//                System.out.println(statement);
+//
+//            }
             program.execute();
 
 //            SemCheck semCheck = new SemCheck();

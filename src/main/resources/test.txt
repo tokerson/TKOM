@@ -3,6 +3,7 @@
 //def Int x([]Int:y);
 //def Int x(Int[]:y);
 
+print((4+2)*3);
 
 def Int x = 2 + 4 * 2 / 3;
 

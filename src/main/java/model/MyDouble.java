@@ -1,6 +1,8 @@
 package model;
 
-public class MyDouble extends Node {
+import semcheck.MyRunTimeException;
+
+public class MyDouble extends Literal<MyDouble> {
 
     private double value;
 
@@ -24,5 +26,30 @@ public class MyDouble extends Node {
     @Override
     public String toString() {
         return String.valueOf(value);
+    }
+
+    @Override
+    public MyDouble add(MyDouble second) {
+        return new MyDouble(value + second.getValue());
+    }
+
+    @Override
+    public MyDouble substract(MyDouble second) {
+        return new MyDouble(value - second.getValue());
+    }
+
+    @Override
+    public MyDouble multiply(MyDouble second) {
+        return new MyDouble(value * second.getValue());
+    }
+
+    @Override
+    public MyDouble divide(MyDouble second) {
+        return new MyDouble(value / second.getValue());
+    }
+
+    @Override
+    public Executable execute(Scope scope) throws MyRunTimeException {
+        return this;
     }
 }

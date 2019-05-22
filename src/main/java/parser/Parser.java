@@ -172,8 +172,8 @@ public class Parser {
         return functionCall;
     }
 
-    private List<Node> parseFunctionArguments() throws Exception {
-        List<Node> arguments = new ArrayList<>();
+    private List<Executable> parseFunctionArguments() throws Exception {
+        List<Executable> arguments = new ArrayList<>();
         while (token.getTokenType() != TokenType.PARENTHESIS_CLOSE) {
             switch (token.getTokenType()) {
                 case IDENTIFIER:
@@ -181,6 +181,7 @@ public class Parser {
                 case DOUBLE:
                 case ADD_OPERATOR:
                 case SUBSTRACT_OPERATOR:
+                case PARENTHESIS_OPEN:
                     arguments.add(parseExpression());
                     break;
                 case ARRAY_OPEN:
@@ -188,7 +189,7 @@ public class Parser {
                     break;
                 default:
                     throw new ParserException(token, new TokenType[]{
-                            TokenType.IDENTIFIER, TokenType.INTEGER, TokenType.DOUBLE, TokenType.PARENTHESIS_CLOSE, TokenType.ARRAY_OPEN
+                            TokenType.IDENTIFIER, TokenType.INTEGER, TokenType.DOUBLE, TokenType.PARENTHESIS_CLOSE, TokenType.PARENTHESIS_OPEN, TokenType.ARRAY_OPEN
                     });
             }
             if (token.getTokenType().equals(TokenType.COMMA)) {
@@ -476,7 +477,7 @@ public class Parser {
         }
     }
 
-    private Node parseLiteral() throws Exception {
+    private Literal parseLiteral() throws Exception {
 
         switch (token.getTokenType()) {
             case SUBSTRACT_OPERATOR:
@@ -495,7 +496,7 @@ public class Parser {
         }
     }
 
-    private Node parseNumber(int sign) throws Exception {
+    private Literal parseNumber(int sign) throws Exception {
         switch (token.getTokenType()) {
             case INTEGER:
                 int intVal = Integer.parseInt(token.getContent());

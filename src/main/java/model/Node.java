@@ -13,7 +13,8 @@ public abstract class Node {
         IfStatement,
         Return,
         BodyBlock,
-        Array
+        Array,
+        Literal
     }
 
     public abstract Type getType();

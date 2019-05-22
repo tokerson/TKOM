@@ -1,24 +1,25 @@
 package model;
 
 import model.Token.TokenType;
+import semcheck.MyRunTimeException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Array extends Node {
+public class Array extends Node implements Executable {
 
     private TokenType elementsType;
-    private List<Node> elements = new ArrayList<Node>();
+    private List<Literal> elements = new ArrayList<Literal>();
 
     public Array(TokenType type) {
         this.elementsType = type;
     }
 
-    public void addElement(Node element) {
+    public void addElement(Literal element) {
         elements.add(element);
     }
 
-    public List<Node> getElements() {
+    public List<Literal> getElements() {
         return elements;
     }
 
@@ -44,5 +45,10 @@ public class Array extends Node {
         }
         stringBuilder.append("]");
         return stringBuilder.toString();
+    }
+
+    @Override
+    public Executable execute(Scope scope) throws MyRunTimeException {
+        return null;
     }
 }

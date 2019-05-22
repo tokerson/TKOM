@@ -8,22 +8,22 @@ import java.util.List;
 public class FunctionCall extends Node implements Executable{
 
     private String name;
-    private List<Node> arguments;
+    private List<Executable> arguments;
 
     public FunctionCall(String name) {
         this.name = name;
         this.arguments = new ArrayList<>();
     }
 
-    public void addArgument(Node argument) {
+    public void addArgument(Executable argument) {
         this.arguments.add(argument);
     }
 
-    public void setArguments(List<Node> arguments){
+    public void setArguments(List<Executable> arguments){
         this.arguments = arguments;
     }
 
-    public List<Node> getArguments() {
+    public List<Executable> getArguments() {
         return arguments;
     }
 
@@ -48,12 +48,13 @@ public class FunctionCall extends Node implements Executable{
     }
 
     @Override
-    public Node execute(Scope scope) throws MyRunTimeException {
+    public Executable execute(Scope scope) throws MyRunTimeException {
         if(this.name.equals("print")){
             Stdlib.print.setArguments(this.getArguments());
             return Stdlib.print.execute(scope);
         } else if (this.name.equals("head")){
             Stdlib.head.setArguments(this.getArguments());
+            System.out.println(Stdlib.head.execute(scope));
             return Stdlib.head.execute(scope);
         } else if (this.name.equals("tail")){
             Stdlib.tail.setArguments(this.getArguments());
