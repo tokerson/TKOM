@@ -59,7 +59,7 @@ public class Parser {
         MyType type = parseReturnedType();
 
         String identifier = token.getContent();
-        addToScope(scope, identifier);
+        addToScope(scope, identifier, type);
         accept(TokenType.IDENTIFIER);
 
         switch (token.getTokenType()) {
@@ -68,6 +68,7 @@ public class Parser {
                 functionDeclaration = new FunctionDeclaration(identifier, type);
                 functionDeclaration.setParameters(parseFunctionParameters(functionDeclaration.getScope()));
                 functionDeclaration.setBodyBlock(parseFunctionBody(functionDeclaration.getScope(),type));
+                functionDeclaration.setParentScope(scope);
                 return functionDeclaration;
             case ASSIGN_OPERATOR:
                 accept(TokenType.ASSIGN_OPERATOR);
@@ -78,8 +79,8 @@ public class Parser {
 
     }
 
-    private void addToScope(Scope scope, String identifier) throws Exception {
-        if(!scope.addToScope(identifier)){
+    private void addToScope(Scope scope, String identifier, MyType myType) throws Exception {
+        if(!scope.addToScope(identifier, myType)){
             throw new Exception("Redefinition of function " + identifier + " at line: " +token.getTextPosition().getLineNumber() + " and char: " + token.getTextPosition().getCharacterNumber() + " within same scope");
         }
     }
@@ -134,7 +135,7 @@ public class Parser {
                     accept(TokenType.FUNCTION_DECL);
                     MyType type = parseReturnedType();
                     String identifier = token.getContent();
-                    addToScope(scope,identifier);
+                    addToScope(scope,identifier, type);
                     accept(TokenType.IDENTIFIER);
                     accept(TokenType.ASSIGN_OPERATOR);
                     bodyBlock.addInstruction(parseFunctionAssignment(identifier, type));
@@ -356,9 +357,10 @@ public class Parser {
         }
         accept(TokenType.PARAMETER_TYPE);
         name = token.getContent();
-        addToScope(scope,name);
+        MyType type = new MyType(array,tokenType);
+        addToScope(scope,name,type);
         accept(TokenType.IDENTIFIER);
-        return new Parameter(new MyType(array,tokenType), name);
+        return new Parameter(type, name);
     }
 
     private Node parseFunctionAssignment(String identifier, MyType returnType) throws Exception {

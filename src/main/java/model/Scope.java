@@ -6,33 +6,23 @@ import java.util.Map;
 import java.util.Set;
 
 public class Scope {
+
     private Scope parentScope = null;
+    private Map<String, MyType> functionAndTypes = new HashMap<String, MyType>();
 
-    private Map<String, Function> functions = new HashMap<>();
-    private Set<String> functionAndTypes = new HashSet<String>();
 
-    public boolean addFunction(Function function) {
-        if(functions.containsKey(function.getName())){
+    public boolean addToScope(String identifier, MyType myType){
+        if(functionAndTypes.containsKey(identifier)){
             return false;
         }
         else {
-            functions.put(function.getName(), function);
+            functionAndTypes.put(identifier, myType);
             return true;
         }
     }
 
-    public boolean addToScope(String identifier){
-        if(functionAndTypes.contains(identifier)){
-            return false;
-        }
-        else {
-            functionAndTypes.add(identifier);
-            return true;
-        }
-    }
-
-    public Function getFunction(String name) {
-        return functions.get(name);
+    public void setParentScope(final Scope parentScope) {
+        this.parentScope = parentScope;
     }
 
 }

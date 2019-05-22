@@ -16,7 +16,7 @@ public class Main {
         InputStreamReader inputStreamReader = null;
         try {
             inputStreamReader = new InputStreamReader(
-                    new FileInputStream( new File("src/main/resources/test1.txt"))
+                    new FileInputStream( new File("src/main/resources/test.txt"))
             );
 
         } catch (FileNotFoundException e) {
@@ -26,13 +26,11 @@ public class Main {
         Lexer lexer = new Lexer(inputStreamReader);
         Parser parser = new Parser(lexer);
         Program program;
+        SemCheck semCheck = new SemCheck();
         try {
             program = parser.parse();
 //            Node statement = program.getStatement(0);
-//            for(Node statement: program.getStatements()){
-//                System.out.println(statement);
-//
-//            }
+            semCheck.check(program);
             program.execute();
 
 //            SemCheck semCheck = new SemCheck();

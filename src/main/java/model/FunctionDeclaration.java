@@ -44,6 +44,10 @@ public class FunctionDeclaration extends Node implements Function{
         this.scope = scope;
     }
 
+    public void setParentScope(Scope scope){
+        this.scope.setParentScope(scope);
+    }
+
     @Override
     public Type getType() {
         return Type.FunctionDeclaration;
