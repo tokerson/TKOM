@@ -42,6 +42,8 @@ public class Parser {
             case FUNCTION_DECL:
                 accept(TokenType.FUNCTION_DECL);
                 return parseFunctionDeclaration(scope);
+            case IDENTIFIER:
+                return parseFunctionCall();
             case SEMICOLON:
                 accept(TokenType.SEMICOLON);
                 return parseInstruction(scope);
@@ -109,7 +111,7 @@ public class Parser {
         return myType;
     }
 
-    private BodyBlock parseFunctionBody(Scope scope, MyType functionType) throws Exception {
+    private BodyBlock  parseFunctionBody(Scope scope, MyType functionType) throws Exception {
         BodyBlock bodyBlock = new BodyBlock();
         boolean parsedReturn = false;
 
@@ -181,9 +183,12 @@ public class Parser {
                 case SUBSTRACT_OPERATOR:
                     arguments.add(parseExpression());
                     break;
+                case ARRAY_OPEN:
+                    arguments.add(parseArrayInit(new MyType(true,TokenType.UNDEFINED)));
+                    break;
                 default:
                     throw new ParserException(token, new TokenType[]{
-                            TokenType.IDENTIFIER, TokenType.INTEGER, TokenType.DOUBLE, TokenType.PARENTHESIS_CLOSE
+                            TokenType.IDENTIFIER, TokenType.INTEGER, TokenType.DOUBLE, TokenType.PARENTHESIS_CLOSE, TokenType.ARRAY_OPEN
                     });
             }
             if (token.getTokenType().equals(TokenType.COMMA)) {
@@ -397,8 +402,17 @@ public class Parser {
     }
 
     private Array parseArrayInit(MyType returnType) throws Exception {
-        Array array = new Array(returnType.getType());
         accept(TokenType.ARRAY_OPEN);
+        Array array ;
+        if(returnType.getType() == TokenType.UNDEFINED && token.getTokenType() != TokenType.ARRAY_CLOSE){
+            if(tokenIs(TokenType.INTEGER, TokenType.DOUBLE)){
+                array = new Array(token.getTokenType());
+            } else {
+                throw new ParserException(token, new TokenType[]{TokenType.INTEGER, TokenType.DOUBLE});
+            }
+        } else {
+           array = new Array(returnType.getType());
+        }
         while(tokenIs(TokenType.INTEGER, TokenType.DOUBLE)){
             array.addElement(parseLiteral());
             if(token.getTokenType() == TokenType.COMMA){

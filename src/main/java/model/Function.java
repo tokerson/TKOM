@@ -2,7 +2,7 @@ package model;
 
 public interface Function {
 
-    public String getName();
+    String getName();
 
-    public Scope getScope();
+    Scope getScope();
 }

@@ -7,24 +7,28 @@ import java.util.List;
 
 public class Array extends Node {
 
-    private TokenType type;
-    private List elements = new ArrayList();
+    private TokenType elementsType;
+    private List<Node> elements = new ArrayList<Node>();
 
     public Array(TokenType type) {
-        this.type = type;
+        this.elementsType = type;
     }
 
     public void addElement(Node element) {
         elements.add(element);
     }
 
-    public List getElements() {
+    public List<Node> getElements() {
         return elements;
     }
 
     @Override
     public Type getType() {
         return Type.Array;
+    }
+
+    public TokenType getElementsType(){
+        return elementsType;
     }
 
     @Override

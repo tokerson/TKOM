@@ -1,9 +1,11 @@
 package model;
 
+import semcheck.MyRunTimeException;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class FunctionCall extends Node {
+public class FunctionCall extends Node implements Executable{
 
     private String name;
     private List<Node> arguments;
@@ -19,6 +21,10 @@ public class FunctionCall extends Node {
 
     public void setArguments(List<Node> arguments){
         this.arguments = arguments;
+    }
+
+    public List<Node> getArguments() {
+        return arguments;
     }
 
     @Override
@@ -39,5 +45,22 @@ public class FunctionCall extends Node {
             stringBuilder.append(" )");
         }
         return stringBuilder.toString();
+    }
+
+    @Override
+    public Node execute(Scope scope) throws MyRunTimeException {
+        if(this.name.equals("print")){
+            Stdlib.print.setArguments(this.getArguments());
+            return Stdlib.print.execute(scope);
+        } else if (this.name.equals("head")){
+            Stdlib.head.setArguments(this.getArguments());
+            return Stdlib.head.execute(scope);
+        } else if (this.name.equals("tail")){
+            Stdlib.tail.setArguments(this.getArguments());
+            System.out.println(Stdlib.tail.execute(scope));
+            return Stdlib.tail.execute(scope);
+        }
+
+        return null;
     }
 }

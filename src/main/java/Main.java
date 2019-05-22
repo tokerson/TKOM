@@ -1,5 +1,6 @@
 import lexer.Lexer;
 import lexer.LexerException;
+import model.FunctionCall;
 import model.Node;
 import model.Program.Program;
 import model.Token.Token;
@@ -15,7 +16,7 @@ public class Main {
         InputStreamReader inputStreamReader = null;
         try {
             inputStreamReader = new InputStreamReader(
-                    new FileInputStream( new File("src/main/resources/test.txt"))
+                    new FileInputStream( new File("src/main/resources/test1.txt"))
             );
 
         } catch (FileNotFoundException e) {
@@ -27,9 +28,7 @@ public class Main {
         Program program;
         try {
             program = parser.parse();
-            for (Node statement: program.getStatements()) {
-                System.out.println(statement);
-            }
+            program.execute();
 
 //            SemCheck semCheck = new SemCheck();
 //            semCheck.check(program);

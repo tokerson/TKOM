@@ -24,7 +24,7 @@ public class Expression extends Node {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("( ");
+        StringBuilder stringBuilder = new StringBuilder();
 
         if(operands.size() > 0) {
             stringBuilder.append(operands.get(0).toString());
@@ -34,8 +34,6 @@ public class Expression extends Node {
             stringBuilder.append(operations.get(i - 1).toString());
             stringBuilder.append(operands.get(i).toString());
         }
-
-        stringBuilder.append(" )");
 
         return stringBuilder.toString();
     }

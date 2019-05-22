@@ -1,8 +1,10 @@
 package model.Program;
 
+import model.FunctionCall;
 import model.Instruction;
 import model.Node;
 import model.Scope;
+import semcheck.MyRunTimeException;
 
 import java.util.ArrayList;
 
@@ -29,6 +31,14 @@ public class Program {
 
     public Scope getScope() {
         return scope;
+    }
+
+    public void execute() throws MyRunTimeException {
+        for (Node statement: this.getStatements()) {
+            if(statement instanceof FunctionCall){
+                ((FunctionCall) statement).execute(this.getScope());
+            }
+        }
     }
 
     public void setScope(Scope scope) {
