@@ -6,9 +6,18 @@ import java.util.List;
 public class BodyBlock extends Node {
 
     private List<Node> instructions = new ArrayList<>();
+    private Scope scope = new Scope();
 
     public void addInstruction(Node instruction){
         this.instructions.add(instruction);
+    }
+
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
     }
 
     @Override

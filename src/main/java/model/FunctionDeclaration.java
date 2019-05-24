@@ -30,6 +30,7 @@ public class FunctionDeclaration extends Node implements Function{
 
     public void setBodyBlock(BodyBlock bodyBlock) {
         this.bodyBlock = bodyBlock;
+        this.bodyBlock.setScope(this.scope);
     }
 
     public BodyBlock getBodyBlock() {

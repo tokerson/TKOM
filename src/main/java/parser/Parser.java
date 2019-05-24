@@ -116,6 +116,7 @@ public class Parser {
 
     private BodyBlock  parseFunctionBody(Scope scope, MyType functionType) throws Exception {
         BodyBlock bodyBlock = new BodyBlock();
+        bodyBlock.setScope(scope);
         boolean parsedReturn = false;
 
         accept(TokenType.BRACKET_OPEN);
@@ -217,20 +218,29 @@ public class Parser {
         accept(TokenType.PARENTHESIS_OPEN);
         ifStatement.setCondition(parseCondition());
         accept(TokenType.PARENTHESIS_CLOSE);
-        ifStatement.setThenBlock(parseFunctionBody(scope, new MyType(false,TokenType.IF)));
+        BodyBlock bodyBlock = new BodyBlock();
+        bodyBlock = parseFunctionBody(bodyBlock.getScope(), new MyType(false, TokenType.IF));
+        bodyBlock.getScope().setParentScope(scope);
+        ifStatement.setThenBlock(bodyBlock);
         boolean foundElse = false;
-        while (!foundElse && (token.getTokenType() == TokenType.ELSE || token.getTokenType() == TokenType.ELSIF)) {
+        while (!foundElse && tokenIs(TokenType.ELSE, TokenType.ELSIF)) {
             switch (token.getTokenType()) {
                 case ELSIF:
                     accept(TokenType.ELSIF);
                     accept(TokenType.PARENTHESIS_OPEN);
                     Condition condition = parseCondition();
                     accept(TokenType.PARENTHESIS_CLOSE);
-                    ifStatement.addElseIf(condition, parseFunctionBody(scope, new MyType(false,TokenType.ELSIF)));
+                    BodyBlock elseBlock = new BodyBlock();
+                    elseBlock = parseFunctionBody(elseBlock.getScope(), new MyType(false, TokenType.ELSIF));
+                    elseBlock.getScope().setParentScope(scope);
+                    ifStatement.addElseIf(condition, elseBlock);
                     break;
                 case ELSE:
                     accept(TokenType.ELSE);
-                    ifStatement.setElseBlock(parseFunctionBody(scope, new MyType(false,TokenType.ELSE)));
+                    elseBlock = new BodyBlock();
+                    elseBlock = parseFunctionBody(elseBlock.getScope(), new MyType(false, TokenType.ELSE));
+                    elseBlock.getScope().setParentScope(scope);
+                    ifStatement.setElseBlock(elseBlock);
                     foundElse = true;
                     break;
                 default:
