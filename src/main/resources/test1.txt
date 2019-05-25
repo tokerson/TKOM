@@ -25,7 +25,10 @@ if( -1 =< -11 ){
 
 }
 
+def Int b = z;
+
 def Int x(Int:c){
+    b();
     return c + 1;
 }
 
