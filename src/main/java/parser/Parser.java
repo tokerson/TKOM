@@ -408,7 +408,7 @@ public class Parser {
 
         expression.addOperand(parseMultiplicativeExpression());
 
-        while (tokenIs(TokenType.ADD_OPERATOR, TokenType.SUBSTRACT_OPERATOR, TokenType.SEMICOLON, TokenType.IDENTIFIER)) {
+        while (tokenIs(TokenType.ADD_OPERATOR, TokenType.SUBSTRACT_OPERATOR, TokenType.SEMICOLON)) {
             switch (token.getTokenType()) {
                 case ADD_OPERATOR:
                 case SUBSTRACT_OPERATOR:

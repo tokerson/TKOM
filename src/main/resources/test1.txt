@@ -5,9 +5,16 @@ head([1]);
 tail([1]);
 tail([1,2]);
 
+
+print(y());
+print(z);
 //x(1);
-x(x(1));
-x([1]);
+//x(x(1));
+
+def Double y = 2.0;
+def Double z = 12.0;
+
+//x(y);
 
 if( 2 > 1 && ( 1>2 || 1 && 0)) {
     def Int x = 2;

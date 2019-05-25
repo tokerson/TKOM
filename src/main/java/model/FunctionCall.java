@@ -3,7 +3,9 @@ package model;
 import semcheck.MyRunTimeException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FunctionCall extends Node implements Executable{
 
@@ -68,16 +70,17 @@ public class FunctionCall extends Node implements Executable{
                 return Stdlib.tail.execute(scope);
         }
 
-        List<Executable> evaluatedErguments = new ArrayList<>();
+        Map<String, Executable> evaluatedArguments = new HashMap<>();
         Function function = scope.getFunctions().get(this.name);
 
         if(function.getParameters().size() != arguments.size()){
-            throw new MyRunTimeException("Wrong number of arguments for function " + this.name);
+            throw new MyRunTimeException("Wrong number of arguments for function " + this.name +". Given - "
+                    +arguments.size()+ " and should be - "+function.getParameters().size()+".");
         }
 
         for (int i = 0 ; i < arguments.size(); ++i){
             Parameter parameter = function.getParameters().get(i);
-            Executable argument = arguments.get(i).execute(scope);
+            Executable argument = arguments.get(i);
 
             if (argument instanceof Literal) {
                 checkParameter(parameter,((Literal) argument).getEvaluatedType());
@@ -85,11 +88,10 @@ public class FunctionCall extends Node implements Executable{
                 checkParameter(parameter,new MyType(true,((Array) argument).getElementsType()));
             }
 
-            evaluatedErguments.add(argument);
+            evaluatedArguments.put(parameter.getName(),argument);
         }
 
-
-        return null;
+        return function.execute(evaluatedArguments);
     }
 
     private void checkParameter(Parameter parameter, MyType givenType) throws MyRunTimeException {

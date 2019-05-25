@@ -1,9 +1,10 @@
 package model;
 
-import model.Token.TokenType;
+import semcheck.MyRunTimeException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FunctionAssignment extends Node implements Function {
     private String identifier;
@@ -32,6 +33,11 @@ public class FunctionAssignment extends Node implements Function {
     @Override
     public List<Parameter> getParameters() {
         return new ArrayList<>();
+    }
+
+    @Override
+    public Executable execute(Map<String, Executable> evaluatedArguments) throws MyRunTimeException {
+        return expression.execute(scope);
     }
 
     public void setScope(Scope scope) {

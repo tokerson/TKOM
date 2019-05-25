@@ -4,11 +4,13 @@ import semcheck.MyRunTimeException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class BodyBlock extends Node implements Executable{
 
     private List<Node> instructions = new ArrayList<>();
     private Scope scope = new Scope();
+    private Map blockSpecificArguments = null;
 
     public void addInstruction(Node instruction){
         this.instructions.add(instruction);
@@ -43,6 +45,15 @@ public class BodyBlock extends Node implements Executable{
 
     @Override
     public Executable execute(Scope scope) throws MyRunTimeException {
+        for (Node instruction: instructions){
+            if (instruction instanceof Executable){
+                ((Executable) instruction).execute(scope);
+            }
+        }
         return null;
+    }
+
+    public void addBlockSpecifiedArguments(Map<String, Executable> evaluatedArguments) {
+        blockSpecificArguments = evaluatedArguments;
     }
 }

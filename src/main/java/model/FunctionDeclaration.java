@@ -1,8 +1,9 @@
 package model;
 
-import model.Token.TokenType;
+import semcheck.MyRunTimeException;
 
 import java.util.List;
+import java.util.Map;
 
 public class FunctionDeclaration extends Node implements Function{
     private String identifier;
@@ -22,6 +23,12 @@ public class FunctionDeclaration extends Node implements Function{
 
     public List<Parameter> getParameters() {
         return parameters;
+    }
+
+    @Override
+    public Executable execute(Map<String, Executable> evaluatedArguments) throws MyRunTimeException {
+        bodyBlock.addBlockSpecifiedArguments(evaluatedArguments);
+        return bodyBlock.execute(scope);
     }
 
     public void setParameters(List<Parameter> parameters) {
