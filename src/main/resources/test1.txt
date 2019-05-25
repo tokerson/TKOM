@@ -5,14 +5,13 @@ head([1]);
 tail([1]);
 tail([1,2]);
 
-
-print(y());
+print(x(z));
 print(z);
 //x(1);
 //x(x(1));
 
 def Double y = 2.0;
-def Double z = 12.0;
+def Int z = 12;
 
 //x(y);
 
@@ -26,9 +25,11 @@ if( -1 =< -11 ){
 
 }
 
-def Int x(Int:x){
-    return 0;
+def Int x(Int:c){
+    return c + 1;
 }
+
+
 
 //those are supposed to throw an Exception while Runtime
 //head();

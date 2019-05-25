@@ -11,6 +11,8 @@ public class FunctionAssignment extends Node implements Function {
     private Expression expression;
     private MyType returnType;
     private Scope scope = new Scope();
+    private List<Parameter> parameters = new ArrayList<>();
+
 
     public FunctionAssignment(String identifier, Expression expression, MyType returnType) {
         this.identifier = identifier;
@@ -36,7 +38,7 @@ public class FunctionAssignment extends Node implements Function {
     }
 
     @Override
-    public Executable execute(Map<String, Executable> evaluatedArguments) throws MyRunTimeException {
+    public Executable execute(Scope scope, Map<String, Expression> evaluatedArguments) throws MyRunTimeException {
         return expression.execute(scope);
     }
 

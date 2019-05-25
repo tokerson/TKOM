@@ -130,7 +130,7 @@ public class Parser {
                     bodyBlock.addInstruction(parseIf(scope));
                     break;
                 case RETURN:
-                    bodyBlock.addInstruction(parseReturn());
+                    bodyBlock.addInstruction((Node) parseReturn());
                     parsedReturn = true;
                     break;
                 case IDENTIFIER:
@@ -147,6 +147,7 @@ public class Parser {
                     FunctionAssignment functionAssignment = parseFunctionAssignment(identifier, type);
                     bodyBlock.addInstruction(functionAssignment);
                     bodyBlock.getScope().addFunction(functionAssignment);
+
                     break;
                 default:
                     if (token.getTokenType().equals(TokenType.BRACKET_CLOSE)) {
@@ -208,7 +209,7 @@ public class Parser {
         return arguments;
     }
 
-    private Node parseReturn() throws Exception {
+    private Executable parseReturn() throws Exception {
 
         accept(TokenType.RETURN);
         Return returnStatement = new Return(parseExpression());

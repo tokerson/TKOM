@@ -25,6 +25,7 @@ public class Scope {
 
     public boolean addFunction(Function function) {
         if(functions.containsKey(function.getName())){
+            functions.put(function.getName(), function);
             return false;
         }
         else {

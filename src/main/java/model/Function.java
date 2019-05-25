@@ -15,6 +15,6 @@ public interface Function {
 
     List<Parameter> getParameters();
 
-    Executable execute(final Map<String, Executable> evaluatedArguments) throws MyRunTimeException;
+    Executable execute(Scope scope, final Map<String, Expression> evaluatedArguments) throws MyRunTimeException;
 
 }

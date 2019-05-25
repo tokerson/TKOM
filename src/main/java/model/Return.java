@@ -1,10 +1,12 @@
 package model;
 
-public class Return extends Node {
+import semcheck.MyRunTimeException;
 
-    private Node returnStatement;
+public class Return extends Node implements Executable{
 
-    public Return(Node returnStatement) {
+    private Executable returnStatement;
+
+    public Return(Executable returnStatement) {
         this.returnStatement = returnStatement;
     }
 
@@ -16,5 +18,10 @@ public class Return extends Node {
     @Override
     public String toString() {
         return "return " + returnStatement;
+    }
+
+    @Override
+    public Executable execute(Scope scope) throws MyRunTimeException {
+        return returnStatement.execute(scope);
     }
 }

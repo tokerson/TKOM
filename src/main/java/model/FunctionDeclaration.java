@@ -2,13 +2,14 @@ package model;
 
 import semcheck.MyRunTimeException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class FunctionDeclaration extends Node implements Function{
     private String identifier;
     private MyType returnType;
-    private List<Parameter> parameters;
+    private List<Parameter> parameters = new ArrayList<>();
     private BodyBlock bodyBlock;
     private Scope scope = new Scope();
 
@@ -25,9 +26,22 @@ public class FunctionDeclaration extends Node implements Function{
         return parameters;
     }
 
+    public Parameter getParameter(String identifier){
+        for (Parameter parameter : parameters){
+            if (parameter.getName().equals(identifier)){
+                return parameter;
+            }
+        }
+        return null;
+    }
+
     @Override
-    public Executable execute(Map<String, Executable> evaluatedArguments) throws MyRunTimeException {
-        bodyBlock.addBlockSpecifiedArguments(evaluatedArguments);
+    public Executable execute(Scope scope, Map<String, Expression> evaluatedArguments) throws MyRunTimeException {
+        for (String key: evaluatedArguments.keySet()){
+            Function function = new FunctionAssignment(key, evaluatedArguments.get(key), getParameter(key).getParameterType());
+            scope.addFunction(function);
+        }
+
         return bodyBlock.execute(scope);
     }
 

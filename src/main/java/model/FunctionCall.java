@@ -7,21 +7,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FunctionCall extends Node implements Executable{
+public class FunctionCall extends Node implements Executable {
 
     private String name;
-    private List<Executable> arguments;
+    private List<Executable> arguments = new ArrayList<>();
 
     public FunctionCall(String name) {
         this.name = name;
-        this.arguments = new ArrayList<>();
     }
 
     public void addArgument(Executable argument) {
         this.arguments.add(argument);
     }
 
-    public void setArguments(List<Executable> arguments){
+    public void setArguments(List<Executable> arguments) {
         this.arguments = arguments;
     }
 
@@ -70,34 +69,34 @@ public class FunctionCall extends Node implements Executable{
                 return Stdlib.tail.execute(scope);
         }
 
-        Map<String, Executable> evaluatedArguments = new HashMap<>();
+        Map<String, Expression> evaluatedArguments = new HashMap<>();
         Function function = scope.getFunctions().get(this.name);
 
-        if(function.getParameters().size() != arguments.size()){
-            throw new MyRunTimeException("Wrong number of arguments for function " + this.name +". Given - "
-                    +arguments.size()+ " and should be - "+function.getParameters().size()+".");
+        if (function.getParameters().size() != arguments.size()) {
+            throw new MyRunTimeException("Wrong number of arguments for function " + this.name + ". Given - "
+                    + arguments.size() + " and should be - " + function.getParameters().size() + ".");
         }
 
-        for (int i = 0 ; i < arguments.size(); ++i){
+        for (int i = 0; i < arguments.size(); ++i) {
             Parameter parameter = function.getParameters().get(i);
             Executable argument = arguments.get(i);
 
             if (argument instanceof Literal) {
-                checkParameter(parameter,((Literal) argument).getEvaluatedType());
+                checkParameter(parameter, ((Literal) argument).getEvaluatedType());
             } else if (argument instanceof Array) {
-                checkParameter(parameter,new MyType(true,((Array) argument).getElementsType()));
+                checkParameter(parameter, new MyType(true, ((Array) argument).getElementsType()));
             }
 
-            evaluatedArguments.put(parameter.getName(),argument);
+            evaluatedArguments.put(parameter.getName(), (Expression) argument);
         }
 
-        return function.execute(evaluatedArguments);
+        return function.execute(scope, evaluatedArguments);
     }
 
     private void checkParameter(Parameter parameter, MyType givenType) throws MyRunTimeException {
-        if(!parameter.getParameterType().equals(givenType)){
-            throw new MyRunTimeException("Wrong parameter type for parameter " + parameter.getName() +". Found " +
-                    givenType + " but should be " + parameter.getParameterType() +".");
+        if (!parameter.getParameterType().equals(givenType)) {
+            throw new MyRunTimeException("Wrong parameter type for parameter " + parameter.getName() + ". Found " +
+                    givenType + " but should be " + parameter.getParameterType() + ".");
         }
     }
 
