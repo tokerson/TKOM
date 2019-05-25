@@ -5,11 +5,14 @@ head([1]);
 tail([1]);
 tail([1,2]);
 
-if( 2 == 1) {
+if( 2 > 1 && ( 1>2 || 1 && 0)) {
     def Int x = 2;
-
 } elsif( 1 ){
 } else {
+}
+
+if( 1.01 != 1 ){
+
 }
 
 //those are supposed to throw an Exception while Runtime

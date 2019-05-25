@@ -50,7 +50,7 @@ public class MyDouble extends Literal<MyDouble> {
 
     @Override
     public boolean isTrue() {
-        return value > 0;
+        return isTrue;
     }
 
     @Override
@@ -61,6 +61,49 @@ public class MyDouble extends Literal<MyDouble> {
             this.isTrue = this.value == (double)((MyInteger) second).getValue();
         }
         return this;
+    }
+
+    @Override
+    public MyDouble isNotEqual(Literal second){
+        this.isTrue = !this.isEqual(second).isTrue();
+        return this;
+    }
+
+    @Override
+    public MyDouble isGreaterThan(Literal second) {
+        if(second instanceof MyDouble){
+            this.isTrue = this.value > ((MyDouble) second).getValue();
+        } else if(second instanceof MyInteger){
+            this.isTrue = this.value > (double)((MyInteger) second).getValue();
+        }
+        return this;
+    }
+
+    @Override
+    public MyDouble isGreaterOrEqualThan(Literal second) {
+        if(second instanceof MyDouble){
+            this.isTrue = this.value >= ((MyDouble) second).getValue();
+        } else if(second instanceof MyInteger){
+            this.isTrue = this.value >= (double)((MyInteger) second).getValue();
+        }        return this;
+    }
+
+    @Override
+    public MyDouble isLessThan(Literal second) {
+        if(second instanceof MyDouble){
+            this.isTrue = this.value < ((MyDouble) second).getValue();
+        } else if(second instanceof MyInteger){
+            this.isTrue = this.value < (double)((MyInteger) second).getValue();
+        }        return this;
+    }
+
+    @Override
+    public MyDouble isLessOrEqualThan(Literal second) {
+        if(second instanceof MyDouble){
+            this.isTrue = this.value <= ((MyDouble) second).getValue();
+        } else if(second instanceof MyInteger){
+            this.isTrue = this.value <= (double)((MyInteger) second).getValue();
+        }        return this;
     }
 
 

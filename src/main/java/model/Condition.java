@@ -24,24 +24,28 @@ public class Condition extends Expression {
 
                     switch (operation) {
                         case OR:
-//                            result = (Literal) ((Literal) literal).or(operand);
+                            result = (Literal) ((Literal) literal).or((Literal) operand);
                             break;
                         case AND:
-                            result = (Literal) ((Literal) literal).substract(operand);
+                            result = (Literal) ((Literal) literal).and((Literal) operand);
                             break;
                         case EQUALS_OPERATOR:
                             result = (Literal) ((Literal) literal).isEqual((Literal) operand);
                             break;
                         case NOT_EQUALS_OPERATOR:
-                            result = (Literal) ((Literal) literal).divide(operand);
+                            result = (Literal) ((Literal) literal).isNotEqual((Literal) operand);
                             break;
                         case GREATER_OPERATOR:
+                            result = (Literal) ((Literal) literal).isGreaterThan((Literal) operand);
                             break;
                         case GREATER_EQUALS_OPERATOR:
+                            result = (Literal) ((Literal) literal).isGreaterOrEqualThan((Literal) operand);
                             break;
                         case LESS_OPERATOR:
+                            result = (Literal) ((Literal) literal).isLessThan((Literal) operand);
                             break;
                         case LESS_EQUALS_OPERATOR:
+                            result = (Literal) ((Literal) literal).isLessOrEqualThan((Literal) operand);
                             break;
                     }
                 }

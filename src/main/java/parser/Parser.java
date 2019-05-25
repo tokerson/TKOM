@@ -67,7 +67,7 @@ public class Parser {
                 accept(TokenType.PARENTHESIS_OPEN);
                 functionDeclaration = new FunctionDeclaration(identifier, type);
                 functionDeclaration.setParameters(parseFunctionParameters(functionDeclaration.getScope()));
-                functionDeclaration.setBodyBlock(parseFunctionBody(functionDeclaration.getScope(),type));
+                functionDeclaration.setBodyBlock(parseFunctionBody(functionDeclaration.getScope(), type));
                 functionDeclaration.setParentScope(scope);
                 return functionDeclaration;
             case ASSIGN_OPERATOR:
@@ -82,8 +82,8 @@ public class Parser {
     }
 
     private void addToScope(Scope scope, String identifier, MyType myType) throws Exception {
-        if(!scope.addToScope(identifier, myType)){
-            throw new Exception("Redefinition of function " + identifier + " at line: " +token.getTextPosition().getLineNumber() + " and char: " + token.getTextPosition().getCharacterNumber() + " within same scope");
+        if (!scope.addToScope(identifier, myType)) {
+            throw new Exception("Redefinition of function " + identifier + " at line: " + token.getTextPosition().getLineNumber() + " and char: " + token.getTextPosition().getCharacterNumber() + " within same scope");
         }
     }
 
@@ -96,7 +96,7 @@ public class Parser {
                 accept(token.getTokenType());
                 accept(TokenType.ARRAY_CLOSE);
                 isArray = true;
-                if(tokenIs(TokenType.INT_TYPE, TokenType.DOUBLE_TYPE)){
+                if (tokenIs(TokenType.INT_TYPE, TokenType.DOUBLE_TYPE)) {
                     type = token.getTokenType();
                     accept(token.getTokenType());
                 } else throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE});
@@ -114,7 +114,7 @@ public class Parser {
         return myType;
     }
 
-    private BodyBlock  parseFunctionBody(Scope scope, MyType functionType) throws Exception {
+    private BodyBlock parseFunctionBody(Scope scope, MyType functionType) throws Exception {
         BodyBlock bodyBlock = new BodyBlock();
         bodyBlock.setScope(scope);
         boolean parsedReturn = false;
@@ -138,7 +138,7 @@ public class Parser {
                     accept(TokenType.FUNCTION_DECL);
                     MyType type = parseReturnedType();
                     String identifier = token.getContent();
-                    addToScope(scope,identifier, type);
+                    addToScope(scope, identifier, type);
                     accept(TokenType.IDENTIFIER);
                     accept(TokenType.ASSIGN_OPERATOR);
                     bodyBlock.addInstruction(parseFunctionAssignment(identifier, type));
@@ -189,7 +189,7 @@ public class Parser {
                     arguments.add(parseExpression());
                     break;
                 case ARRAY_OPEN:
-                    arguments.add(parseArrayInit(new MyType(true,TokenType.UNDEFINED)));
+                    arguments.add(parseArrayInit(new MyType(true, TokenType.UNDEFINED)));
                     break;
                 default:
                     throw new ParserException(token, new TokenType[]{
@@ -247,7 +247,7 @@ public class Parser {
                     throw new ParserException(token, new TokenType[]{TokenType.ELSIF, TokenType.ELSE});
             }
         }
-        if(foundElse && token.getTokenType() == TokenType.ELSE){
+        if (foundElse && token.getTokenType() == TokenType.ELSE) {
             throw new ParserException(token, " Two ELSE statements for one IF");
         }
 
@@ -303,28 +303,37 @@ public class Parser {
     private Node parseRelationalCondition() throws Exception {
         Condition condition = new Condition();
 
-        condition.addOperand(parseExpression());
-        while ( token.getTokenType() == TokenType.LESS_OPERATOR || token.getTokenType() == TokenType.LESS_EQUALS_OPERATOR ||
-                token.getTokenType() == TokenType.GREATER_OPERATOR || token.getTokenType() == TokenType.GREATER_EQUALS_OPERATOR) {
+        condition.addOperand(parsePrimaryCondition());
+        while (tokenIs(TokenType.LESS_OPERATOR, TokenType.LESS_EQUALS_OPERATOR, TokenType.GREATER_OPERATOR, TokenType.GREATER_EQUALS_OPERATOR)) {
             TokenType currentTokenType = token.getTokenType();
             switch (token.getTokenType()) {
                 case LESS_OPERATOR:
-                    accept(TokenType.LESS_OPERATOR);
-                    break;
                 case LESS_EQUALS_OPERATOR:
-                    accept(TokenType.LESS_EQUALS_OPERATOR);
-                    break;
                 case GREATER_OPERATOR:
-                    accept(TokenType.GREATER_OPERATOR);
-                    break;
                 case GREATER_EQUALS_OPERATOR:
-                    accept(TokenType.GREATER_EQUALS_OPERATOR);
+                    accept(currentTokenType);
                     break;
                 default:
                     throw new ParserException(token, new TokenType[]{TokenType.LESS_EQUALS_OPERATOR, TokenType.LESS_OPERATOR, TokenType.GREATER_OPERATOR, TokenType.GREATER_EQUALS_OPERATOR});
             }
             condition.addOperator(currentTokenType);
-            condition.addOperand(parseExpression());
+            condition.addOperand(parsePrimaryCondition());
+        }
+        return condition;
+    }
+
+    private Node parsePrimaryCondition() throws Exception {
+        Condition condition = new Condition();
+
+        switch (token.getTokenType()) {
+            case PARENTHESIS_OPEN:
+                accept(TokenType.PARENTHESIS_OPEN);
+                condition.addOperand(parseCondition());
+                accept(TokenType.PARENTHESIS_CLOSE);
+                break;
+            default:
+                condition.addOperand(parseExpression());
+
         }
         return condition;
     }
@@ -337,7 +346,7 @@ public class Parser {
                 case INT_TYPE:
                 case DOUBLE_TYPE:
                 case ARRAY_OPEN:
-                    parameters.add(parseOneParameter(scope,token.getTokenType()));
+                    parameters.add(parseOneParameter(scope, token.getTokenType()));
                     break;
                 default:
                     throw new ParserException(token, new TokenType[]{TokenType.INT_TYPE, TokenType.DOUBLE_TYPE, TokenType.ARRAY_OPEN, TokenType.PARENTHESIS_CLOSE});
@@ -354,7 +363,7 @@ public class Parser {
         String name;
         boolean array = false;
         accept(tokenType);
-        if(tokenType == TokenType.ARRAY_OPEN) {
+        if (tokenType == TokenType.ARRAY_OPEN) {
             accept(TokenType.ARRAY_CLOSE);
             switch (token.getTokenType()) {
                 case INT_TYPE:
@@ -369,8 +378,8 @@ public class Parser {
         }
         accept(TokenType.PARAMETER_TYPE);
         name = token.getContent();
-        MyType type = new MyType(array,tokenType);
-        addToScope(scope,name,type);
+        MyType type = new MyType(array, tokenType);
+        addToScope(scope, name, type);
         accept(TokenType.IDENTIFIER);
         return new Parameter(type, name);
     }
@@ -378,7 +387,7 @@ public class Parser {
     private FunctionAssignment parseFunctionAssignment(String identifier, MyType returnType) throws Exception {
         Expression expression;
 
-        if(token.getTokenType() == TokenType.ARRAY_OPEN){
+        if (token.getTokenType() == TokenType.ARRAY_OPEN) {
             expression = new Expression();
             expression.addOperand(parseArrayInit(returnType));
             returnType.setArray(true);
@@ -418,19 +427,19 @@ public class Parser {
 
     private Array parseArrayInit(MyType returnType) throws Exception {
         accept(TokenType.ARRAY_OPEN);
-        Array array ;
-        if(returnType.getType() == TokenType.UNDEFINED && token.getTokenType() != TokenType.ARRAY_CLOSE){
-            if(tokenIs(TokenType.INTEGER, TokenType.DOUBLE)){
+        Array array;
+        if (returnType.getType() == TokenType.UNDEFINED && token.getTokenType() != TokenType.ARRAY_CLOSE) {
+            if (tokenIs(TokenType.INTEGER, TokenType.DOUBLE)) {
                 array = new Array(token.getTokenType());
             } else {
                 throw new ParserException(token, new TokenType[]{TokenType.INTEGER, TokenType.DOUBLE});
             }
         } else {
-           array = new Array(returnType.getType());
+            array = new Array(returnType.getType());
         }
-        while(tokenIs(TokenType.INTEGER, TokenType.DOUBLE)){
+        while (tokenIs(TokenType.INTEGER, TokenType.DOUBLE)) {
             array.addElement(parseLiteral());
-            if(token.getTokenType() == TokenType.COMMA){
+            if (token.getTokenType() == TokenType.COMMA) {
                 accept(TokenType.COMMA);
             } else {
                 break;

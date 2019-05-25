@@ -86,9 +86,8 @@ public class IfStatement extends Node implements Executable {
 
     @Override
     public Executable execute(Scope scope) throws MyRunTimeException {
-        Literal res = condition.execute(scope);
-        if (res.isTrue()) {
-            System.out.println(res.isTrue());
+        if (condition.execute(scope).isTrue()) {
+            System.out.println(condition.execute(scope).isTrue());
             return thenBlock.execute(scope);
         }
 

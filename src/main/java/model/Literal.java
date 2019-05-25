@@ -35,6 +35,18 @@ public abstract class Literal<T> extends Node implements Executable {
         return (T) this;
     }
 
+    public T isNotEqual(final Literal second){
+        this.isTrue = this.isTrue != second.isTrue();
+        return (T) this;
+    }
+
+    public abstract T isGreaterThan(final Literal second);
+
+    public abstract T isGreaterOrEqualThan(final Literal second);
+
+    public abstract T isLessThan(final Literal second);
+
+    public abstract T isLessOrEqualThan(final Literal second);
 
 
 }

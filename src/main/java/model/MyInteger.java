@@ -69,6 +69,52 @@ public class MyInteger extends Literal<MyInteger> {
     }
 
     @Override
+    public MyInteger isNotEqual(Literal second){
+        this.isTrue = !this.isEqual(second).isTrue();
+        return this;
+    }
+
+    @Override
+    public MyInteger isGreaterThan(Literal second) {
+        if(second instanceof MyInteger){
+            this.isTrue = this.value > ((MyInteger) second).getValue();
+        } else if(second instanceof MyDouble){
+            this.isTrue = this.value > ((MyDouble) second).getValue();
+        }
+        return this;
+    }
+
+    @Override
+    public MyInteger isGreaterOrEqualThan(Literal second) {
+        if(second instanceof MyInteger){
+            this.isTrue = this.value >= ((MyInteger) second).getValue();
+        } else if(second instanceof MyDouble){
+            this.isTrue = this.value >= ((MyDouble) second).getValue();
+        }
+        return this;
+    }
+
+    @Override
+    public MyInteger isLessThan(Literal second) {
+        if(second instanceof MyInteger){
+            this.isTrue = this.value < ((MyInteger) second).getValue();
+        } else if(second instanceof MyDouble){
+            this.isTrue = this.value < ((MyDouble) second).getValue();
+        }
+        return this;
+    }
+
+    @Override
+    public MyInteger isLessOrEqualThan(Literal second) {
+        if(second instanceof MyInteger){
+            this.isTrue = this.value <= ((MyInteger) second).getValue();
+        } else if(second instanceof MyDouble){
+            this.isTrue = this.value <= ((MyDouble) second).getValue();
+        }
+        return this;
+    }
+
+    @Override
     public Executable execute(Scope scope) throws MyRunTimeException {
         this.isTrue = value > 0;
         return this;
