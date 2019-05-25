@@ -1,9 +1,11 @@
 package model;
 
+import semcheck.MyRunTimeException;
+
 import java.util.LinkedList;
 import java.util.List;
 
-public class IfStatement extends Node{
+public class IfStatement extends Node implements Executable {
 
     private Condition condition;
     private BodyBlock thenBlock;
@@ -68,17 +70,40 @@ public class IfStatement extends Node{
         stringBuilder.append(" )");
         stringBuilder.append(thenBlock);
 
-        for(int i = 0; i < elsifConditions.size(); ++i){
+        for (int i = 0; i < elsifConditions.size(); ++i) {
             stringBuilder.append(" elsif (");
             stringBuilder.append(elsifConditions.get(i));
             stringBuilder.append(" )");
             stringBuilder.append(elsifBodys.get(i));
         }
-        if(elseBlock != null){
+        if (elseBlock != null) {
             stringBuilder.append(" else");
             stringBuilder.append(elseBlock);
             stringBuilder.append("\n");
         }
         return stringBuilder.toString();
+    }
+
+    @Override
+    public Executable execute(Scope scope) throws MyRunTimeException {
+        Literal res = condition.execute(scope);
+        if (res.isTrue()) {
+            System.out.println(res.isTrue());
+            return thenBlock.execute(scope);
+        }
+
+        for (int i = 0; i < elsifBodys.size(); ++i) {
+            if (elsifConditions.get(i).execute(scope).isTrue()) {
+                System.out.println(elsifConditions.get(i) + " is true");
+                return elsifBodys.get(i).execute(scope);
+            }
+        }
+
+        if (elseBlock != null) {
+            System.out.println("else is true");
+            return elseBlock.execute(scope);
+        }
+
+        return null;
     }
 }

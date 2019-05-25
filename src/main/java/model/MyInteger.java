@@ -50,7 +50,27 @@ public class MyInteger extends Literal<MyInteger> {
     }
 
     @Override
+    public boolean isTrue() {
+        return isTrue;
+    }
+
+    @Override
+    public MyInteger isEqual(Literal second){
+        if(second instanceof MyInteger){
+            this.setTrue(this.value == ((MyInteger) second).getValue());
+        } else if (second instanceof MyDouble){
+            if(((MyDouble) second).getValue() % 1 == 0){
+                this.isTrue = this.value == (int) ((MyDouble) second).getValue();
+            } else {
+                this.isTrue = false;
+            }
+        }
+        return this;
+    }
+
+    @Override
     public Executable execute(Scope scope) throws MyRunTimeException {
+        this.isTrue = value > 0;
         return this;
     }
 }

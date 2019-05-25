@@ -1,9 +1,11 @@
 package model;
 
+import semcheck.MyRunTimeException;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class BodyBlock extends Node {
+public class BodyBlock extends Node implements Executable{
 
     private List<Node> instructions = new ArrayList<>();
     private Scope scope = new Scope();
@@ -37,5 +39,10 @@ public class BodyBlock extends Node {
 
         stringBuilder.append("}");
         return stringBuilder.toString();
+    }
+
+    @Override
+    public Executable execute(Scope scope) throws MyRunTimeException {
+        return null;
     }
 }

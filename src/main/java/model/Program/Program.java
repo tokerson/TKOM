@@ -1,9 +1,6 @@
 package model.Program;
 
-import model.FunctionCall;
-import model.Instruction;
-import model.Node;
-import model.Scope;
+import model.*;
 import semcheck.MyRunTimeException;
 
 import java.util.ArrayList;
@@ -37,6 +34,9 @@ public class Program {
         for (Node statement: this.getStatements()) {
             if(statement instanceof FunctionCall){
                 ((FunctionCall) statement).execute(this.getScope());
+            }
+            if(statement instanceof IfStatement){
+                ((IfStatement) statement).execute(this.getScope());
             }
         }
     }
