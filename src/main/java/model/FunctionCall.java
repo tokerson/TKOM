@@ -23,6 +23,10 @@ public class FunctionCall extends Node implements Executable{
         this.arguments = arguments;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public List<Executable> getArguments() {
         return arguments;
     }
@@ -49,21 +53,50 @@ public class FunctionCall extends Node implements Executable{
 
     @Override
     public Executable execute(Scope scope) throws MyRunTimeException {
-        if(this.name.equals("print")){
-            Stdlib.print.setArguments(this.getArguments());
-            return Stdlib.print.execute(scope);
-        } else if (this.name.equals("head")){
-            Stdlib.head.setArguments(this.getArguments());
-            System.out.println(Stdlib.head.execute(scope));
-            return Stdlib.head.execute(scope);
-        } else if (this.name.equals("tail")){
-            Stdlib.tail.setArguments(this.getArguments());
-            System.out.println(Stdlib.tail.execute(scope));
-            return Stdlib.tail.execute(scope);
+
+        switch (this.name) {
+            case "print":
+                Stdlib.print.setArguments(this.getArguments());
+                return Stdlib.print.execute(scope);
+            case "head":
+                Stdlib.head.setArguments(this.getArguments());
+                System.out.println(Stdlib.head.execute(scope));
+                return Stdlib.head.execute(scope);
+            case "tail":
+                Stdlib.tail.setArguments(this.getArguments());
+                System.out.println(Stdlib.tail.execute(scope));
+                return Stdlib.tail.execute(scope);
         }
 
+        List<Executable> evaluatedErguments = new ArrayList<>();
+        Function function = scope.getFunctions().get(this.name);
+
+        if(function.getParameters().size() != arguments.size()){
+            throw new MyRunTimeException("Wrong number of arguments for function " + this.name);
+        }
+
+        for (int i = 0 ; i < arguments.size(); ++i){
+            Parameter parameter = function.getParameters().get(i);
+            Executable argument = arguments.get(i).execute(scope);
+
+            if (argument instanceof Literal) {
+                checkParameter(parameter,((Literal) argument).getEvaluatedType());
+            } else if (argument instanceof Array) {
+                checkParameter(parameter,new MyType(true,((Array) argument).getElementsType()));
+            }
+
+            evaluatedErguments.add(argument);
+        }
 
 
         return null;
     }
+
+    private void checkParameter(Parameter parameter, MyType givenType) throws MyRunTimeException {
+        if(!parameter.getParameterType().equals(givenType)){
+            throw new MyRunTimeException("Wrong parameter type for parameter " + parameter.getName() +". Found " +
+                    givenType + " but should be " + parameter.getParameterType() +".");
+        }
+    }
+
 }

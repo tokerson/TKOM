@@ -5,6 +5,10 @@ head([1]);
 tail([1]);
 tail([1,2]);
 
+//x(1);
+x(x(1));
+x([1]);
+
 if( 2 > 1 && ( 1>2 || 1 && 0)) {
     def Int x = 2;
 } elsif( 1 ){
@@ -13,6 +17,10 @@ if( 2 > 1 && ( 1>2 || 1 && 0)) {
 
 if( -1 =< -11 ){
 
+}
+
+def Int x(Int:x){
+    return 0;
 }
 
 //those are supposed to throw an Exception while Runtime

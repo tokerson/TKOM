@@ -119,4 +119,10 @@ public class MyInteger extends Literal<MyInteger> {
         this.isTrue = value > 0;
         return this;
     }
+
+    @Override
+    public MyType getEvaluatedType() {
+        return new MyType(false, TokenType.INT_TYPE);
+    }
+
 }

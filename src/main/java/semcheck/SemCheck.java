@@ -10,22 +10,28 @@ public class SemCheck {
     public void check(Program program) throws Exception {
         this.program = program;
         this.mainScope = program.getScope();
-//        for(Node function : program.getStatements()) {
-//            if(function instanceof Function){
-//                if(!mainScope.addToScope(((Function) function).getName(),((Function) function).getReturnType())){
-//                    throw new Exception("Redefinition of function " + ((Function) function).getName() + " within same scope");
-//                }
-//                else {
-//                    checkFunction((Function)function);
-//                }
-//            }
-//            else checkIfStatement(mainScope);
-//        }
-//        for(Node function: this.program.getStatements()) {
-//            if(function instanceof Function){
-//                ((Function) function).getScope().setParentScope(mainScope);
-//            }
-//        }
+        for(Node statement : program.getStatements()) {
+            if(statement instanceof FunctionCall){
+                checkFuncCall((FunctionCall) statement, mainScope);
+            }
+
+        }
+
+    }
+
+    private void checkFuncCall(FunctionCall functionCall, Scope scope) throws MyRunTimeException {
+        if(Stdlib.FUNCTIONS.contains(functionCall.getName())){
+            return;
+        }
+
+        if(!scope.isInScope(functionCall.getName())){
+            throw new MyRunTimeException("Function " + functionCall.getName() + " wasn't declared in this scope.");
+        }
+        checkFunctionParameters(functionCall);
+    }
+
+    private void checkFunctionParameters(FunctionCall functionCall) {
+
     }
 
     private void checkIfStatement(Scope scope) {

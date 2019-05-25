@@ -2,6 +2,9 @@ package model;
 
 import model.Token.TokenType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FunctionAssignment extends Node implements Function {
     private String identifier;
     private Expression expression;
@@ -24,6 +27,11 @@ public class FunctionAssignment extends Node implements Function {
 
     public Scope getScope() {
         return scope;
+    }
+
+    @Override
+    public List<Parameter> getParameters() {
+        return new ArrayList<>();
     }
 
     public void setScope(Scope scope) {

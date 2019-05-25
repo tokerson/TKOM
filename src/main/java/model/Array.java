@@ -49,6 +49,6 @@ public class Array extends Node implements Executable {
 
     @Override
     public Executable execute(Scope scope) throws MyRunTimeException {
-        return null;
+        return this;
     }
 }

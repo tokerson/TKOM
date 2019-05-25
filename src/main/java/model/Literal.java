@@ -48,5 +48,6 @@ public abstract class Literal<T> extends Node implements Executable {
 
     public abstract T isLessOrEqualThan(final Literal second);
 
+    public abstract MyType getEvaluatedType();
 
 }

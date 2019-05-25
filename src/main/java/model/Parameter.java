@@ -19,6 +19,10 @@ public class Parameter{
         return type.getType();
     }
 
+    public MyType getParameterType() {
+        return type;
+    }
+
     public String getName() {
         return name;
     }

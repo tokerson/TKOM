@@ -4,9 +4,17 @@ import model.Token.TokenType;
 import semcheck.MyRunTimeException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Stdlib {
+
+    public static final HashSet<String> FUNCTIONS = new HashSet<String>() {{
+        add("print");
+        add("head");
+        add("tail");
+    }};
+
     public static FunctionCall print = new FunctionCall("print"){
         @Override
         public Executable execute(Scope scope) throws MyRunTimeException {

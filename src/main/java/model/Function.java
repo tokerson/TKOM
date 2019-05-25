@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 public interface Function {
 
     String getName();
@@ -7,4 +9,6 @@ public interface Function {
     MyType getReturnType();
 
     Scope getScope();
+
+    List<Parameter> getParameters();
 }

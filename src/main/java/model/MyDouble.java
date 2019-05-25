@@ -1,5 +1,6 @@
 package model;
 
+import model.Token.TokenType;
 import semcheck.MyRunTimeException;
 
 public class MyDouble extends Literal<MyDouble> {
@@ -106,10 +107,16 @@ public class MyDouble extends Literal<MyDouble> {
         }        return this;
     }
 
+    @Override
+    public MyType getEvaluatedType() {
+        return new MyType(false, TokenType.DOUBLE_TYPE);
+    }
+
 
     @Override
     public Executable execute(Scope scope) throws MyRunTimeException {
         this.isTrue = value > 0;
         return this;
     }
+
 }

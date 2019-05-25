@@ -69,15 +69,18 @@ public class Parser {
                 functionDeclaration.setParameters(parseFunctionParameters(functionDeclaration.getScope()));
                 functionDeclaration.setBodyBlock(parseFunctionBody(functionDeclaration.getScope(), type));
                 functionDeclaration.setParentScope(scope);
+                scope.addFunction(functionDeclaration);
                 return functionDeclaration;
             case ASSIGN_OPERATOR:
                 accept(TokenType.ASSIGN_OPERATOR);
                 FunctionAssignment functionAssignment = parseFunctionAssignment(identifier, type);
                 functionAssignment.setParentScope(scope);
+                scope.addFunction(functionAssignment);
                 return functionAssignment;
             default:
                 throw new ParserException(token, new TokenType[]{TokenType.ASSIGN_OPERATOR, TokenType.PARENTHESIS_OPEN});
         }
+
 
     }
 
@@ -141,7 +144,9 @@ public class Parser {
                     addToScope(scope, identifier, type);
                     accept(TokenType.IDENTIFIER);
                     accept(TokenType.ASSIGN_OPERATOR);
-                    bodyBlock.addInstruction(parseFunctionAssignment(identifier, type));
+                    FunctionAssignment functionAssignment = parseFunctionAssignment(identifier, type);
+                    bodyBlock.addInstruction(functionAssignment);
+                    bodyBlock.getScope().addFunction(functionAssignment);
                     break;
                 default:
                     if (token.getTokenType().equals(TokenType.BRACKET_CLOSE)) {
