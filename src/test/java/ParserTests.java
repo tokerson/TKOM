@@ -165,7 +165,8 @@ public class ParserTests {
         FunctionAssignment functionAssignment= (FunctionAssignment) program.getStatement(0);
         assertEquals("Return Type is Array",true,functionAssignment.getReturnType().isArray());
         assertEquals("Return Type is Array of Type Int",TokenType.INT_TYPE,functionAssignment.getReturnType().getType());
-        assertEquals("Expression should be of type Array",Node.Type.Array,functionAssignment.getExpression().getOperands().get(0).getType());
+
+        assertEquals("Expression should be of type Array",Node.Type.Array,functionAssignment.getOperand(0).getType());
     }
 
     @Test(expected = Exception.class)

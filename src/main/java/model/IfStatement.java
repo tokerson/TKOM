@@ -87,19 +87,16 @@ public class IfStatement extends Node implements Executable {
     @Override
     public Executable execute(Scope scope) throws MyRunTimeException {
         if (condition.execute(scope).isTrue()) {
-            System.out.println(condition.execute(scope).isTrue());
             return thenBlock.execute(scope);
         }
 
         for (int i = 0; i < elsifBodys.size(); ++i) {
             if (elsifConditions.get(i).execute(scope).isTrue()) {
-                System.out.println(elsifConditions.get(i) + " is true");
                 return elsifBodys.get(i).execute(scope);
             }
         }
 
         if (elseBlock != null) {
-            System.out.println("else is true");
             return elseBlock.execute(scope);
         }
 

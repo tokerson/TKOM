@@ -435,10 +435,15 @@ public class Parser {
         accept(TokenType.ARRAY_OPEN);
         Array array;
         if (returnType.getType() == TokenType.UNDEFINED && token.getTokenType() != TokenType.ARRAY_CLOSE) {
-            if (tokenIs(TokenType.INTEGER, TokenType.DOUBLE)) {
-                array = new Array(token.getTokenType());
-            } else {
-                throw new ParserException(token, new TokenType[]{TokenType.INTEGER, TokenType.DOUBLE});
+            switch (token.getTokenType()) {
+                case INTEGER:
+                    array = new Array(TokenType.INT_TYPE);
+                    break;
+                case DOUBLE:
+                    array = new Array(TokenType.DOUBLE_TYPE);
+                    break;
+                default:
+                    throw new ParserException(token, new TokenType[]{TokenType.INTEGER, TokenType.DOUBLE});
             }
         } else {
             array = new Array(returnType.getType());

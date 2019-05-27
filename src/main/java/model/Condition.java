@@ -53,7 +53,6 @@ public class Condition extends Expression {
         }
 
         return result;
-//        return null;
     }
 
     @Override

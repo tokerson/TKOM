@@ -61,15 +61,16 @@ public class FunctionCall extends Node implements Executable {
                 return Stdlib.print.execute(scope);
             case "head":
                 Stdlib.head.setArguments(this.getArguments());
-                System.out.println(Stdlib.head.execute(scope));
                 return Stdlib.head.execute(scope);
             case "tail":
                 Stdlib.tail.setArguments(this.getArguments());
-                System.out.println(Stdlib.tail.execute(scope));
                 return Stdlib.tail.execute(scope);
+            case "length":
+                Stdlib.length.setArguments(this.getArguments());
+                return Stdlib.length.execute(scope);
         }
 
-        Map<String, Expression> evaluatedArguments = new HashMap<>();
+        Map<String, Executable> evaluatedArguments = new HashMap<>();
         Function function = scope.getFunctions().get(this.name);
 
         if (function.getParameters().size() != arguments.size()) {
@@ -87,7 +88,9 @@ public class FunctionCall extends Node implements Executable {
                 checkParameter(parameter, new MyType(true, ((Array) argument).getElementsType()));
             }
 
-            evaluatedArguments.put(parameter.getName(), (Expression) argument);
+
+            //argument = argument.execute(scope); //this repair recursiveness but language is not lazy then.
+            evaluatedArguments.put(parameter.getName(), argument);
         }
 
         System.out.println("Executing function " + function.getName());

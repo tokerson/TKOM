@@ -48,12 +48,15 @@ public class Expression extends Node implements Executable {
     }
 
     @Override
-    public Literal execute(Scope scope) throws MyRunTimeException {
+    public Executable execute(Scope scope) throws MyRunTimeException {
         Node firstOperand = operands.get(0);
         Executable literal = null;
         if (firstOperand instanceof Executable) {
             literal = ((Executable) firstOperand).execute(scope);
         } else return null;
+        if(literal instanceof Array){
+            return literal;
+        }
         Literal result = (Literal) literal;
 
         if (operations.size() > 0) {

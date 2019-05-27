@@ -13,6 +13,7 @@ public class Stdlib {
         add("print");
         add("head");
         add("tail");
+        add("length");
     }};
 
     public static FunctionCall print = new FunctionCall("print"){
@@ -28,6 +29,7 @@ public class Stdlib {
         public Literal execute(Scope scope) throws MyRunTimeException {
             if(this.getArguments().size() > 0){
                 Executable array = this.getArguments().get(0);
+                array = array.execute(scope);
                 if( array instanceof Array){
                     List<Literal> elements = ((Array) array).getElements();
                     if(elements.size() > 0){
@@ -43,6 +45,7 @@ public class Stdlib {
         public Array execute(Scope scope) throws MyRunTimeException {
             if(this.getArguments().size() > 0){
                 Executable array = this.getArguments().get(0);
+                array = array.execute(scope);
                 if( array instanceof Array){
                     List<Literal> elements = ((Array) array).getElements();
                     if(elements.size() > 0){
@@ -54,6 +57,20 @@ public class Stdlib {
                     } else throw new MyRunTimeException("tail's list cannot be empty ");
                 } else throw new MyRunTimeException("Argument of the standard tail function must be an Array");
             } else throw new MyRunTimeException("Argument of the standard tail function must be an Array");
+        }
+    };
+
+    public static FunctionCall length = new FunctionCall("length"){
+        @Override
+        public Literal execute(Scope scope) throws MyRunTimeException {
+            if(this.getArguments().size() > 0){
+                Executable array = this.getArguments().get(0);
+                array = array.execute(scope);
+                if( array instanceof Array){
+                    List<Literal> elements = ((Array) array).getElements();
+                    return new MyInteger(elements.size());
+                } else throw new MyRunTimeException("Argument of the standard length function must be an Array");
+            } else throw new MyRunTimeException("Argument of the standard length function must be an Array");
         }
     };
 }

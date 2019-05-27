@@ -36,7 +36,7 @@ public class FunctionDeclaration extends Node implements Function{
     }
 
     @Override
-    public Executable execute(Scope scope, Map<String, Expression> evaluatedArguments) throws MyRunTimeException {
+    public Executable execute(Scope scope, Map<String, Executable> evaluatedArguments) throws MyRunTimeException {
         for (String key: evaluatedArguments.keySet()){
             Function function = new FunctionAssignment(key, evaluatedArguments.get(key), getParameter(key).getParameterType());
             scope.addFunction(function);
