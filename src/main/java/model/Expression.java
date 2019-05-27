@@ -68,16 +68,16 @@ public class Expression extends Node implements Executable {
 
                     switch (operation) {
                         case ADD_OPERATOR:
-                            result = (Literal) ((Literal) literal).add(operand);
+                            result = (Literal) ((Literal) literal).add((Literal) operand);
                             break;
                         case SUBSTRACT_OPERATOR:
-                            result = (Literal) ((Literal) literal).substract(operand);
+                            result = (Literal) ((Literal) literal).substract((Literal) operand);
                             break;
                         case MULTIPLY_OPERATOR:
-                            result = (Literal) ((Literal) literal).multiply(operand);
+                            result = (Literal) ((Literal) literal).multiply((Literal) operand);
                             break;
                         case DIVIDE_OPERATOR:
-                            result = (Literal) ((Literal) literal).divide(operand);
+                            result = (Literal) ((Literal) literal).divide((Literal) operand);
                             break;
                     }
                 }

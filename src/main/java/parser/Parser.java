@@ -189,6 +189,7 @@ public class Parser {
                 case IDENTIFIER:
                 case INTEGER:
                 case DOUBLE:
+                case STRING:
                 case ADD_OPERATOR:
                 case SUBSTRACT_OPERATOR:
                 case PARENTHESIS_OPEN:
@@ -199,7 +200,7 @@ public class Parser {
                     break;
                 default:
                     throw new ParserException(token, new TokenType[]{
-                            TokenType.IDENTIFIER, TokenType.INTEGER, TokenType.DOUBLE, TokenType.PARENTHESIS_CLOSE, TokenType.PARENTHESIS_OPEN, TokenType.ARRAY_OPEN
+                            TokenType.IDENTIFIER, TokenType.INTEGER, TokenType.DOUBLE, TokenType.PARENTHESIS_CLOSE, TokenType.PARENTHESIS_OPEN, TokenType.ARRAY_OPEN, TokenType.STRING
                     });
             }
             if (token.getTokenType().equals(TokenType.COMMA)) {
@@ -507,7 +508,8 @@ public class Parser {
                 expression.addOperand(parseFunctionCall());
                 return expression;
             default:
-                return parseLiteral();
+                expression.addOperand(parseLiteral());
+                return expression;
         }
     }
 
@@ -523,9 +525,13 @@ public class Parser {
             case INTEGER:
             case DOUBLE:
                 return parseNumber(1);
+            case STRING:
+                String content = token.getContent();
+                accept(TokenType.STRING);
+                return new MyString(content);
             default:
                 throw new ParserException(token, new TokenType[]{TokenType.SUBSTRACT_OPERATOR, TokenType.ADD_OPERATOR,
-                        TokenType.INTEGER, TokenType.DOUBLE
+                        TokenType.INTEGER, TokenType.DOUBLE, TokenType.STRING
                 });
         }
     }

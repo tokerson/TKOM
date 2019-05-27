@@ -14,7 +14,8 @@ public abstract class Node {
         Return,
         BodyBlock,
         Array,
-        Literal
+        Literal,
+        String
     }
 
     public abstract Type getType();

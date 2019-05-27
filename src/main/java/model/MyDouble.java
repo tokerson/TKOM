@@ -3,7 +3,7 @@ package model;
 import model.Token.TokenType;
 import semcheck.MyRunTimeException;
 
-public class MyDouble extends Literal<MyDouble> {
+public class MyDouble extends Literal<MyDouble, Double> {
 
     private double value;
 
@@ -11,7 +11,7 @@ public class MyDouble extends Literal<MyDouble> {
         this.value = value;
     }
 
-    public double getValue() {
+    public Double getValue() {
         return value;
     }
 
@@ -30,23 +30,39 @@ public class MyDouble extends Literal<MyDouble> {
     }
 
     @Override
-    public MyDouble add(MyDouble second) {
-        return new MyDouble(value + second.getValue());
+    public MyDouble add(Literal second) throws MyRunTimeException {
+        if(second instanceof MyInteger){
+            return new MyDouble(value +((MyInteger) second).getValue());
+        } else if (second instanceof MyDouble){
+            return new MyDouble((value + ((MyDouble) second).getValue()));
+        } else throw new MyRunTimeException("Cannot add NaN to double.");
     }
 
     @Override
-    public MyDouble substract(MyDouble second) {
-        return new MyDouble(value - second.getValue());
+    public MyDouble substract(Literal second) throws MyRunTimeException {
+        if(second instanceof MyInteger){
+            return new MyDouble(value -((MyInteger) second).getValue());
+        } else if (second instanceof MyDouble){
+            return new MyDouble((value - ((MyDouble) second).getValue()));
+        } else throw new MyRunTimeException("Cannot substract NaN from double.");
     }
 
     @Override
-    public MyDouble multiply(MyDouble second) {
-        return new MyDouble(value * second.getValue());
+    public MyDouble multiply(Literal second) throws MyRunTimeException {
+        if(second instanceof MyInteger){
+            return new MyDouble(value *((MyInteger) second).getValue());
+        } else if (second instanceof MyDouble){
+            return new MyDouble((value * ((MyDouble) second).getValue()));
+        } else throw new MyRunTimeException("Cannot multiply double by NaN.");
     }
 
     @Override
-    public MyDouble divide(MyDouble second) {
-        return new MyDouble(value / second.getValue());
+    public MyDouble divide(Literal second) throws MyRunTimeException {
+        if(second instanceof MyInteger){
+            return new MyDouble(value /((MyInteger) second).getValue());
+        } else if (second instanceof MyDouble){
+            return new MyDouble((value / ((MyDouble) second).getValue()));
+        } else throw new MyRunTimeException("Cannot divide double by NaN.");
     }
 
     @Override
@@ -55,56 +71,69 @@ public class MyDouble extends Literal<MyDouble> {
     }
 
     @Override
-    public MyDouble isEqual(Literal second){
+    public MyDouble isEqual(Literal second) throws MyRunTimeException {
         if(second instanceof MyDouble){
             this.isTrue = this.value == ((MyDouble) second).getValue();
         } else if (second instanceof MyInteger){
             this.isTrue = this.value == (double)((MyInteger) second).getValue();
+        } else {
+            throw new MyRunTimeException("Cannot compare double with NaN");
         }
         return this;
     }
 
     @Override
-    public MyDouble isNotEqual(Literal second){
+    public MyDouble isNotEqual(Literal second) throws MyRunTimeException {
         this.isTrue = !this.isEqual(second).isTrue();
         return this;
     }
 
     @Override
-    public MyDouble isGreaterThan(Literal second) {
+    public MyDouble isGreaterThan(Literal second) throws MyRunTimeException {
         if(second instanceof MyDouble){
             this.isTrue = this.value > ((MyDouble) second).getValue();
         } else if(second instanceof MyInteger){
             this.isTrue = this.value > (double)((MyInteger) second).getValue();
+        } else {
+            throw new MyRunTimeException("Cannot compare double with NaN");
         }
         return this;
     }
 
     @Override
-    public MyDouble isGreaterOrEqualThan(Literal second) {
+    public MyDouble isGreaterOrEqualThan(Literal second) throws MyRunTimeException {
         if(second instanceof MyDouble){
             this.isTrue = this.value >= ((MyDouble) second).getValue();
         } else if(second instanceof MyInteger){
             this.isTrue = this.value >= (double)((MyInteger) second).getValue();
-        }        return this;
+        } else {
+            throw new MyRunTimeException("Cannot compare double with NaN");
+        }
+        return this;
     }
 
     @Override
-    public MyDouble isLessThan(Literal second) {
+    public MyDouble isLessThan(Literal second) throws MyRunTimeException {
         if(second instanceof MyDouble){
             this.isTrue = this.value < ((MyDouble) second).getValue();
         } else if(second instanceof MyInteger){
             this.isTrue = this.value < (double)((MyInteger) second).getValue();
-        }        return this;
+        }  else {
+            throw new MyRunTimeException("Cannot compare double with NaN");
+        }
+        return this;
     }
 
     @Override
-    public MyDouble isLessOrEqualThan(Literal second) {
+    public MyDouble isLessOrEqualThan(Literal second) throws MyRunTimeException {
         if(second instanceof MyDouble){
             this.isTrue = this.value <= ((MyDouble) second).getValue();
         } else if(second instanceof MyInteger){
             this.isTrue = this.value <= (double)((MyInteger) second).getValue();
-        }        return this;
+        } else {
+            throw new MyRunTimeException("Cannot compare double with NaN");
+        }
+        return this;
     }
 
     @Override
