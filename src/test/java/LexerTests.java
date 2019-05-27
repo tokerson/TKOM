@@ -121,13 +121,6 @@ public class LexerTests {
         assertEquals("token's type should be STRING", TokenType.STRING, token.getTokenType());
     }
 
-    @Test
-    public void isReturningStringWithBackslashesInside() throws Exception {
-        String text = "\"hello \\world\\\"";
-        Token token = getTokenFromString(text);
-        assertEquals("token's content should be \"hello \\world\\\"", "hello \\world\\", token.getContent());
-        assertEquals("token's type should be STRING", TokenType.STRING, token.getTokenType());
-    }
 
     @Test
     public void isReturningEndTokenWhenTheFileIsEmpty() throws Exception {

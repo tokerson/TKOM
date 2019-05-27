@@ -159,14 +159,14 @@ public class ParserTests {
 
     @Test
     public void isParsingAFunctionAssignmentWhenAssigningToArray() throws Exception {
-        String text = "def []Int x = [1, 2]";
+        String text = "def []Int x = [1, 2];";
         Program program = parse(text);
         assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
         FunctionAssignment functionAssignment= (FunctionAssignment) program.getStatement(0);
         assertEquals("Return Type is Array",true,functionAssignment.getReturnType().isArray());
         assertEquals("Return Type is Array of Type Int",TokenType.INT_TYPE,functionAssignment.getReturnType().getType());
 
-        assertEquals("Expression should be of type Array",Node.Type.Array,functionAssignment.getOperand(0).getType());
+        assertEquals("Expression should be of type Array","model.Array",functionAssignment.getOperand(0).getClass().getCanonicalName());
     }
 
     @Test(expected = Exception.class)
