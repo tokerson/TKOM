@@ -39,10 +39,10 @@ public class FunctionDeclaration extends Node implements Function{
     public Executable execute(Scope scope, Map<String, Executable> evaluatedArguments) throws MyRunTimeException {
         for (String key: evaluatedArguments.keySet()){
             Function function = new FunctionAssignment(key, evaluatedArguments.get(key), getParameter(key).getParameterType());
-            scope.addFunction(function);
+            bodyBlock.getScope().addFunction(function);
         }
 
-        return bodyBlock.execute(scope);
+        return bodyBlock.execute(bodyBlock.getScope());
     }
 
     public void setParameters(List<Parameter> parameters) {

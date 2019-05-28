@@ -48,6 +48,10 @@ public class Scope {
         this.parentScope = parentScope;
     }
 
+    public Scope getParentScope() {
+        return parentScope;
+    }
+
     public boolean isInScope(String identifier){
         return functionAndTypes.containsKey(identifier);
     }

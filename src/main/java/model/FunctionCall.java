@@ -72,6 +72,19 @@ public class FunctionCall extends Node implements Executable {
 
         Map<String, Executable> evaluatedArguments = new HashMap<>();
         Function function = scope.getFunctions().get(this.name);
+        Scope tempScope = scope.getParentScope();
+
+        while(function == null) {
+            function = tempScope.getFunctions().get(this.name);
+            tempScope = tempScope.getParentScope();
+            if(tempScope == null) break;
+        }
+
+
+        if(function == null) {
+            throw new MyRunTimeException("Function " + this.name + " wasn't declared in this scope");
+        }
+        
 
         if (function.getParameters().size() != arguments.size()) {
             throw new MyRunTimeException("Wrong number of arguments for function " + this.name + ". Given - "
@@ -89,7 +102,7 @@ public class FunctionCall extends Node implements Executable {
             }
 
 
-            //argument = argument.execute(scope); //this repair recursiveness but language is not lazy then.
+            argument = argument.execute(scope); //this repair recursiveness but language is not lazy then.
             evaluatedArguments.put(parameter.getName(), argument);
         }
 

@@ -13,6 +13,8 @@ public interface Function {
 
     Scope getScope();
 
+    void setScope(Scope scope);
+
     List<Parameter> getParameters();
 
     Executable execute(Scope scope, final Map<String, Executable> evaluatedArguments) throws MyRunTimeException;

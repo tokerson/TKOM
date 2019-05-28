@@ -32,6 +32,8 @@ public class FunctionAssignment extends Node implements Function {
         return scope;
     }
 
+
+
     public Executable getOperand(int index){
         if(expression instanceof Expression){
             return (Executable) ((Expression) expression).getOperands().get(index);

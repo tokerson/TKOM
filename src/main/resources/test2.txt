@@ -6,7 +6,12 @@ def Int printA(Int: a){
     return 0;
 }
 
-//printA(4);
+def Int x(Int: d){
+    def Int c = d - 2;
+    return c;
+}
 
-def []Int a = [1,2,3];
+printA(x(10));
+
+def []Int a = [8,1,2,3];
 print(head(a));
