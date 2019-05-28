@@ -16,7 +16,7 @@ public class Main {
         InputStreamReader inputStreamReader = null;
         try {
             inputStreamReader = new InputStreamReader(
-                    new FileInputStream( new File("src/main/resources/test2.txt"))
+                    new FileInputStream( new File("src/main/resources/test.txt"))
             );
 
         } catch (FileNotFoundException e) {
