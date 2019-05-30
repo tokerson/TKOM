@@ -1,0 +1,14 @@
+def Int factorial(Int: x) {
+    if(x =< 2) {
+        return x;
+    }
+    return x*factorial(x-1);
+
+}
+
+def Int c(Int: d){
+ return d;
+}
+
+print(factorial(10));
+

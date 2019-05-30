@@ -19,7 +19,7 @@ public class Stdlib {
     public static FunctionCall print = new FunctionCall("print"){
         @Override
         public Executable execute(Scope scope) throws MyRunTimeException {
-            System.out.println(this.getArguments().get(0).execute(scope));
+            System.out.print(this.getArguments().get(0).execute(scope));
             return null;
         }
     };

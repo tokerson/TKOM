@@ -49,7 +49,10 @@ public class BodyBlock extends Node implements Executable{
                 return ((Return) instruction).execute(scope);
             }
             if (instruction instanceof Executable){
-                ((Executable) instruction).execute(scope);
+                Executable executed = ((Executable) instruction).execute(scope);
+                if(executed instanceof Literal){
+                    return executed;
+                }
             }
         }
         return null;
