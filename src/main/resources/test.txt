@@ -4,11 +4,13 @@
 //def Int x(Int[]:y);
 
 print(2 + 4 * 4 / 2);
+print("\n");
 
 //print(x(4));
 
 def Int x = 2 + 4 * 4 / 2;
 print(x);
+print("\n");
 def Int y = -2;
 
 if( 4 * 2 / 2 + 1 > 3 && 1 > 2 || 1 < 2) {

@@ -1,10 +1,9 @@
 package model;
 
-import semcheck.MyRunTimeException;
+import program.MyRunTimeException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class BodyBlock extends Node implements Executable{
 
@@ -21,6 +20,10 @@ public class BodyBlock extends Node implements Executable{
 
     public void setScope(Scope scope) {
         this.scope = scope;
+    }
+
+    public void setParentScope(Scope scope) {
+        this.scope.setParentScope(scope);
     }
 
     @Override

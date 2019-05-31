@@ -1,4 +1,4 @@
-package semcheck;
+package program;
 
 public class MyRunTimeException extends Exception{
 

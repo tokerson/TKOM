@@ -1,7 +1,7 @@
 package model;
 
 import model.Token.TokenType;
-import semcheck.MyRunTimeException;
+import program.MyRunTimeException;
 
 public class Condition extends Expression {
     private boolean isNegated = false;

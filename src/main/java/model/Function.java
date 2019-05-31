@@ -1,6 +1,6 @@
 package model;
 
-import semcheck.MyRunTimeException;
+import program.MyRunTimeException;
 
 import java.util.List;
 import java.util.Map;

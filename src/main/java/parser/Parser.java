@@ -2,7 +2,7 @@ package parser;
 
 import model.*;
 import model.MyInteger;
-import model.Program.Program;
+import program.Program;
 import model.Token.Token;
 import lexer.Lexer;
 import model.Token.TokenType;
@@ -435,27 +435,42 @@ public class Parser {
     private Array parseArrayInit(MyType returnType) throws Exception {
         accept(TokenType.ARRAY_OPEN);
         Array array;
+        TokenType elementsType = null;
         if (returnType.getType() == TokenType.UNDEFINED && token.getTokenType() != TokenType.ARRAY_CLOSE) {
             switch (token.getTokenType()) {
                 case INTEGER:
                     array = new Array(TokenType.INT_TYPE);
+                    elementsType = token.getTokenType();
                     break;
                 case DOUBLE:
                     array = new Array(TokenType.DOUBLE_TYPE);
+                    elementsType = token.getTokenType();
                     break;
                 default:
                     throw new ParserException(token, new TokenType[]{TokenType.INTEGER, TokenType.DOUBLE});
             }
         } else {
             array = new Array(returnType.getType());
+            if(returnType.getType() == TokenType.INT_TYPE){
+                elementsType = TokenType.INTEGER;
+            } else if(returnType.getType() == TokenType.DOUBLE_TYPE){
+                elementsType = TokenType.DOUBLE;
+            }
         }
-        while (tokenIs(TokenType.INTEGER, TokenType.DOUBLE)) {
-            array.addElement(parseLiteral());
+
+
+        while (elementsType != null && tokenIs(elementsType)) {
+            if(token.getTokenType() == elementsType){
+                array.addElement(parseLiteral());
+            }
             if (token.getTokenType() == TokenType.COMMA) {
                 accept(TokenType.COMMA);
             } else {
                 break;
             }
+        }
+        if(token.getTokenType() != TokenType.ARRAY_CLOSE){
+            throw new ParserException(token, " Unexpected type of array element. Expecting " + elementsType + ", but found " + token.getTokenType());
         }
         accept(TokenType.ARRAY_CLOSE);
         return array;

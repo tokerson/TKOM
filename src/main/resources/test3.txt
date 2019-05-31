@@ -3,12 +3,13 @@ def Int factorial(Int: x) {
         return x;
     }
     return x*factorial(x-1);
-
 }
 
 def Int c(Int: d){
- return d;
+ return 2.0*d;
 }
 
 print(factorial(10));
+
+print(c(4));
 

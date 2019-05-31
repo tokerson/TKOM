@@ -1,7 +1,7 @@
 package model;
 
 import model.Token.TokenType;
-import semcheck.MyRunTimeException;
+import program.MyRunTimeException;
 
 public class MyString extends Literal<MyString, String> {
 

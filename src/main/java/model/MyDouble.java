@@ -1,7 +1,7 @@
 package model;
 
 import model.Token.TokenType;
-import semcheck.MyRunTimeException;
+import program.MyRunTimeException;
 
 public class MyDouble extends Literal<MyDouble, Double> {
 
@@ -30,11 +30,13 @@ public class MyDouble extends Literal<MyDouble, Double> {
     }
 
     @Override
-    public MyDouble add(Literal second) throws MyRunTimeException {
+    public Literal add(Literal second) throws MyRunTimeException {
         if(second instanceof MyInteger){
             return new MyDouble(value +((MyInteger) second).getValue());
         } else if (second instanceof MyDouble){
             return new MyDouble((value + ((MyDouble) second).getValue()));
+        } else if (second instanceof MyString) {
+            return new MyString(value + (String) second.getValue());
         } else throw new MyRunTimeException("Cannot add NaN to double.");
     }
 

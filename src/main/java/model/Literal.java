@@ -1,6 +1,6 @@
 package model;
 
-import semcheck.MyRunTimeException;
+import program.MyRunTimeException;
 
 public abstract class Literal<T,VT> extends Node implements Executable {
 
@@ -8,7 +8,7 @@ public abstract class Literal<T,VT> extends Node implements Executable {
 
     public abstract VT getValue();
 
-    public abstract T add(final Literal second) throws MyRunTimeException;
+    public abstract Literal add(final Literal second) throws MyRunTimeException;
 
     public abstract T substract(final Literal second) throws MyRunTimeException;
 

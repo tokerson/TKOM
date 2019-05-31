@@ -1,6 +1,7 @@
 package model;
 
-import semcheck.MyRunTimeException;
+import com.sun.xml.internal.ws.wsdl.writer.document.soap.Body;
+import program.MyRunTimeException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -87,17 +88,21 @@ public class IfStatement extends Node implements Executable {
     @Override
     public Executable execute(Scope scope) throws MyRunTimeException {
         if (condition.execute(scope).isTrue()) {
-            return thenBlock.execute(scope);
+            thenBlock.setParentScope(scope);
+            return thenBlock.execute(thenBlock.getScope());
         }
 
         for (int i = 0; i < elsifBodys.size(); ++i) {
             if (elsifConditions.get(i).execute(scope).isTrue()) {
-                return elsifBodys.get(i).execute(scope);
+                BodyBlock elseifBody = elsifBodys.get(i);
+                elseifBody.setParentScope(scope);
+                return elseifBody.execute(elseifBody.getScope());
             }
         }
 
         if (elseBlock != null) {
-            return elseBlock.execute(scope);
+            elseBlock.setParentScope(scope);
+            return elseBlock.execute(elseBlock.getScope());
         }
 
         return null;

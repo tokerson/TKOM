@@ -1,6 +1,6 @@
 package model;
 
-import semcheck.MyRunTimeException;
+import program.MyRunTimeException;
 
 public class Return extends Node implements Executable{
 

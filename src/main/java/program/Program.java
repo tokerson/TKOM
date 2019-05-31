@@ -1,7 +1,6 @@
-package model.Program;
+package program;
 
 import model.*;
-import semcheck.MyRunTimeException;
 
 import java.util.ArrayList;
 

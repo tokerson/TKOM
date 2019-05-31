@@ -1,15 +1,16 @@
 import lexer.Lexer;
 import model.IfStatement;
 import model.Node;
-import model.Program.Program;
+import parser.ParserException;
+import program.Program;
 import org.junit.Test;
 import parser.Parser;
-import semcheck.MyRunTimeException;
+import program.MyRunTimeException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 
 public class ExecutionTests {
@@ -210,7 +211,7 @@ public class ExecutionTests {
         Program program = parse(text);
         assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
-        assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
+        assertTrue("Condition should be true", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
 
     @Test
@@ -219,7 +220,7 @@ public class ExecutionTests {
         Program program = parse(text);
         assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
-        assertEquals("Condition should be false", false, ifStatement.getCondition().execute(program.getScope()).isTrue());
+        assertFalse("Condition should be false", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
 
     @Test
@@ -228,7 +229,7 @@ public class ExecutionTests {
         Program program = parse(text);
         assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
-        assertEquals("Condition should be false", false, ifStatement.getCondition().execute(program.getScope()).isTrue());
+        assertFalse("Condition should be false", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
 
     @Test
@@ -237,7 +238,7 @@ public class ExecutionTests {
         Program program = parse(text);
         assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
-        assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
+        assertTrue("Condition should be true", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
 
     @Test
@@ -246,7 +247,7 @@ public class ExecutionTests {
         Program program = parse(text);
         assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
-        assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
+        assertTrue("Condition should be true", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
 
     @Test
@@ -255,7 +256,7 @@ public class ExecutionTests {
         Program program = parse(text);
         assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
-        assertEquals("Condition should be false", false, ifStatement.getCondition().execute(program.getScope()).isTrue());
+        assertFalse("Condition should be false", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
 
     @Test
@@ -264,7 +265,7 @@ public class ExecutionTests {
         Program program = parse(text);
         assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
-        assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
+        assertTrue("Condition should be true", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
 
     @Test
@@ -273,7 +274,7 @@ public class ExecutionTests {
         Program program = parse(text);
         assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
-        assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
+        assertTrue("Condition should be true", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
 
     @Test
@@ -282,8 +283,29 @@ public class ExecutionTests {
         Program program = parse(text);
         assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
-        assertEquals("Condition should be false", false, ifStatement.getCondition().execute(program.getScope()).isTrue());
+        assertFalse("Condition should be false", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrowingExceptionWhenCallingFunctionFromDeeperScope() throws Exception {
+        String text = "def Int x(){\n" +
+                "        if( 2 > 1  ) {\n" +
+                "            def Int c = 2;\n" +
+                "            if( 2 >1 ){\n" +
+                "                def Int d = 4;\n" +
+                "            }\n" +
+                "            return d;\n" +
+                "        }\n" +
+                "        return 3;\n" +
+                "    }" +
+                "x"; //function call
+        Program program = parse(text);
+        program.execute();
+    }
+
+
+
+
 
 
 

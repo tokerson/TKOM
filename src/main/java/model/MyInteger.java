@@ -1,7 +1,7 @@
 package model;
 
 import model.Token.TokenType;
-import semcheck.MyRunTimeException;
+import program.MyRunTimeException;
 
 public class MyInteger extends Literal<MyInteger, Integer> {
 
@@ -30,14 +30,17 @@ public class MyInteger extends Literal<MyInteger, Integer> {
     }
 
     @Override
-    public MyInteger add(Literal second) throws MyRunTimeException {
+    public Literal add(Literal second) throws MyRunTimeException {
         if(second instanceof MyInteger){
             return new MyInteger(value + (int)second.getValue());
         } else if (second instanceof MyDouble){
             if(((MyDouble) second).getValue() % 1 == 0){
                 return new MyInteger((int) (value + ((MyDouble) second).getValue()));
             } else throw new MyRunTimeException("Cannot add double to integer");
+        } else if (second instanceof MyString){
+            return new MyString(value + (String) second.getValue());
         } else throw new MyRunTimeException("Cannot add non-integer to integer");
+
     }
 
     @Override

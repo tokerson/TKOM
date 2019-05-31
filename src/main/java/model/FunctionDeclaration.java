@@ -1,6 +1,6 @@
 package model;
 
-import semcheck.MyRunTimeException;
+import program.MyRunTimeException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,16 @@ public class FunctionDeclaration extends Node implements Function{
             bodyBlock.getScope().addFunction(function);
         }
 
-        return bodyBlock.execute(bodyBlock.getScope());
+        Executable evalutedValue = bodyBlock.execute(bodyBlock.getScope());
+
+
+
+//        if( evalutedValue instanceof Literal)
+        return evalutedValue;
+    }
+
+    public void checkReturnedType(){
+
     }
 
     public void setParameters(List<Parameter> parameters) {

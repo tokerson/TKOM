@@ -3,7 +3,7 @@ import model.FunctionAssignment;
 import model.FunctionDeclaration;
 import model.IfStatement;
 import model.Node;
-import model.Program.Program;
+import program.Program;
 import model.Token.TokenType;
 import org.junit.Test;
 import parser.Parser;
@@ -264,7 +264,19 @@ public class ParserTests {
                 "def Int x = 4;\n" +
                 "return 2;}";
         Program program = parse(text);
+        assertEquals("First statement should be a function declaration", FunctionDeclaration.class,program.getStatement(0).getClass());
+        FunctionDeclaration functionDeclaration = (FunctionDeclaration) program.getStatement(0);
+        assertEquals("Function's scope should contain function x", true,functionDeclaration.getScope().isInScope("x"));
+        assertEquals("Function's scope should contain function y", true,functionDeclaration.getScope().isInScope("y"));
     }
+
+    @Test(expected = ParserException.class)
+    public void isThrowingAnExceptionWhenInitializingArrayWithDifferentTypes() throws Exception {
+        String text = "def []Int array = [1,2,3.0];";
+        Program program = parse(text);
+    }
+
+
 
     private Program parse(String string) throws Exception {
         Lexer lexer = new Lexer(convertStringToInputStreamReader(string));
