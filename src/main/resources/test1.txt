@@ -10,7 +10,7 @@ head([1]);
 tail([1]);
 print(tail([1,2,3]));
 
-def []Int ds = [1,2,3.0];
+def []Int ds = [1,2,3];
 
 print(ds);
 

@@ -241,21 +241,23 @@ public class ParserTests {
         Program program = parse(text);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ParserException.class)
     public void isThrowingAnExceptionWhenTwoFunctionsWithTheSameNameAreDeclaredInTheSameScope() throws Exception {
         String text = "def Int x(){\n" +
                 "def Int y = 4;\n" +
                 "def Int y = 2;\n" +
                 "return 2;}";
         Program program = parse(text);
+        program.execute();
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ParserException.class)
     public void isThrowingAnExceptionWhenFunctionIsDeclaredInTheScopeButIsInParametersAsWell() throws Exception {
         String text = "def Int x(Int:y){\n" +
                 "def Int y = 4;\n" +
                 "return 2;}";
         Program program = parse(text);
+        program.execute();
     }
 
     @Test

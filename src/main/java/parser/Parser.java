@@ -59,7 +59,6 @@ public class Parser {
         MyType type = parseReturnedType();
 
         String identifier = token.getContent();
-        addToScope(scope, identifier, type);
         accept(TokenType.IDENTIFIER);
 
         switch (token.getTokenType()) {
@@ -67,27 +66,21 @@ public class Parser {
                 accept(TokenType.PARENTHESIS_OPEN);
                 functionDeclaration = new FunctionDeclaration(identifier, type);
                 functionDeclaration.setParameters(parseFunctionParameters(functionDeclaration.getScope()));
-                functionDeclaration.setBodyBlock(parseFunctionBody(functionDeclaration.getScope(), type));
+                parseFunctionBody(functionDeclaration.getBodyBlock(), type);
                 functionDeclaration.setParentScope(scope);
-                scope.addFunction(functionDeclaration);
+                if(!scope.addFunction(functionDeclaration)) throw new ParserException(token, "Redeclaration of function " + functionDeclaration.getName() + " within the same scope.");
                 return functionDeclaration;
             case ASSIGN_OPERATOR:
                 accept(TokenType.ASSIGN_OPERATOR);
                 FunctionAssignment functionAssignment = parseFunctionAssignment(identifier, type);
                 functionAssignment.setParentScope(scope);
-                scope.addFunction(functionAssignment);
+                if(!scope.addFunction(functionAssignment)) throw new ParserException(token, "Redeclaration of function " + functionAssignment.getName() + " within the same scope.");
                 return functionAssignment;
             default:
                 throw new ParserException(token, new TokenType[]{TokenType.ASSIGN_OPERATOR, TokenType.PARENTHESIS_OPEN});
         }
 
 
-    }
-
-    private void addToScope(Scope scope, String identifier, MyType myType) throws Exception {
-        if (!scope.addToScope(identifier, myType)) {
-            throw new Exception("Redefinition of function " + identifier + " at line: " + token.getTextPosition().getLineNumber() + " and char: " + token.getTextPosition().getCharacterNumber() + " within same scope");
-        }
     }
 
     private MyType parseReturnedType() throws Exception {
@@ -117,9 +110,7 @@ public class Parser {
         return myType;
     }
 
-    private BodyBlock parseFunctionBody(Scope scope, MyType functionType) throws Exception {
-        BodyBlock bodyBlock = new BodyBlock();
-        bodyBlock.setScope(scope);
+    private void parseFunctionBody(BodyBlock bodyBlock, MyType functionType) throws Exception {
         boolean parsedReturn = false;
 
         accept(TokenType.BRACKET_OPEN);
@@ -141,13 +132,11 @@ public class Parser {
                     accept(TokenType.FUNCTION_DECL);
                     MyType type = parseReturnedType();
                     String identifier = token.getContent();
-                    addToScope(scope, identifier, type);
                     accept(TokenType.IDENTIFIER);
                     accept(TokenType.ASSIGN_OPERATOR);
                     FunctionAssignment functionAssignment = parseFunctionAssignment(identifier, type);
                     bodyBlock.addInstruction(functionAssignment);
-                    bodyBlock.getScope().addFunction(functionAssignment);
-
+                    if(!bodyBlock.getScope().addFunction(functionAssignment)) throw new ParserException(token, "Redeclaration of function " + functionAssignment.getName() + " within the same scope.");;
                     break;
                 default:
                     if (token.getTokenType().equals(TokenType.BRACKET_CLOSE)) {
@@ -164,7 +153,6 @@ public class Parser {
             throw new ParserException(token, new TokenType[]{TokenType.RETURN});
         }
         accept(TokenType.BRACKET_CLOSE);
-        return bodyBlock;
     }
 
     private Node parseFunctionCall() throws Exception {
@@ -226,8 +214,8 @@ public class Parser {
         ifStatement.setCondition(parseCondition());
         accept(TokenType.PARENTHESIS_CLOSE);
         BodyBlock bodyBlock = new BodyBlock();
-        bodyBlock = parseFunctionBody(bodyBlock.getScope(), new MyType(false, TokenType.IF));
-        bodyBlock.getScope().setParentScope(scope);
+        parseFunctionBody(bodyBlock, new MyType(false, TokenType.IF));
+        bodyBlock.setParentScope(scope);
         ifStatement.setThenBlock(bodyBlock);
         boolean foundElse = false;
         while (!foundElse && tokenIs(TokenType.ELSE, TokenType.ELSIF)) {
@@ -238,14 +226,14 @@ public class Parser {
                     Condition condition = parseCondition();
                     accept(TokenType.PARENTHESIS_CLOSE);
                     BodyBlock elseBlock = new BodyBlock();
-                    elseBlock = parseFunctionBody(elseBlock.getScope(), new MyType(false, TokenType.ELSIF));
+                    parseFunctionBody(elseBlock, new MyType(false, TokenType.ELSIF));
                     elseBlock.getScope().setParentScope(scope);
                     ifStatement.addElseIf(condition, elseBlock);
                     break;
                 case ELSE:
                     accept(TokenType.ELSE);
                     elseBlock = new BodyBlock();
-                    elseBlock = parseFunctionBody(elseBlock.getScope(), new MyType(false, TokenType.ELSE));
+                    parseFunctionBody(elseBlock, new MyType(false, TokenType.ELSE));
                     elseBlock.getScope().setParentScope(scope);
                     ifStatement.setElseBlock(elseBlock);
                     foundElse = true;
@@ -386,7 +374,7 @@ public class Parser {
         accept(TokenType.PARAMETER_TYPE);
         name = token.getContent();
         MyType type = new MyType(array, tokenType);
-        addToScope(scope, name, type);
+        if(!scope.addFunction(new FunctionAssignment(name,new Expression(), type))) throw new ParserException(token, "Redeclaration of function " + name + " within the same scope.");
         accept(TokenType.IDENTIFIER);
         return new Parameter(type, name);
     }

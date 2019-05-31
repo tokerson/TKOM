@@ -11,11 +11,11 @@ public class FunctionDeclaration extends Node implements Function{
     private MyType returnType;
     private List<Parameter> parameters = new ArrayList<>();
     private BodyBlock bodyBlock;
-    private Scope scope = new Scope();
 
     public FunctionDeclaration(String identifier, MyType returnType) {
         this.identifier = identifier;
         this.returnType = returnType;
+        this.bodyBlock = new BodyBlock();
     }
 
     public MyType getReturnType() {
@@ -33,6 +33,10 @@ public class FunctionDeclaration extends Node implements Function{
             }
         }
         return null;
+    }
+
+    public boolean addToScope(Function function){
+        return this.bodyBlock.getScope().addFunction(function);
     }
 
     @Override
@@ -60,7 +64,7 @@ public class FunctionDeclaration extends Node implements Function{
 
     public void setBodyBlock(BodyBlock bodyBlock) {
         this.bodyBlock = bodyBlock;
-        this.bodyBlock.setScope(this.scope);
+        this.bodyBlock.setScope(bodyBlock.getScope());
     }
 
     public BodyBlock getBodyBlock() {
@@ -68,15 +72,15 @@ public class FunctionDeclaration extends Node implements Function{
     }
 
     public Scope getScope() {
-        return scope;
+        return bodyBlock.getScope();
     }
 
     public void setScope(Scope scope) {
-        this.scope = scope;
+        this.bodyBlock.setScope(scope);
     }
 
     public void setParentScope(Scope scope){
-        this.scope.setParentScope(scope);
+        this.bodyBlock.setParentScope(scope);
     }
 
     @Override
