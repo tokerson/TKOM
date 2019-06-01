@@ -1,5 +1,6 @@
 import lexer.Lexer;
 import model.*;
+import model.Token.TokenType;
 import parser.ParserException;
 import program.Program;
 import org.junit.Test;
@@ -357,6 +358,33 @@ public class ExecutionTests {
     }
 
     @Test
+    public void isReturningFalseWhenComparingIntToDifferentDouble() throws Exception {
+        String text = "if( 1 == 1.4 ){}";
+        Program program = parse(text);
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
+        IfStatement ifStatement = (IfStatement) program.getStatement(0);
+        assertFalse("Condition should be false", ifStatement.getCondition().execute(program.getScope()).isTrue());
+    }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrowingExceptionWhenComparingIntToString() throws Exception {
+        String text = "if( 1 == \"1.4\" ){}";
+        Program program = parse(text);
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
+        IfStatement ifStatement = (IfStatement) program.getStatement(0);
+        ifStatement.execute(program.getScope());
+    }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrowingExceptionWhenComparingDoubleToString() throws Exception {
+        String text = "if( 1.0 == \"1.4\" ){}";
+        Program program = parse(text);
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
+        IfStatement ifStatement = (IfStatement) program.getStatement(0);
+        ifStatement.execute(program.getScope());
+    }
+
+    @Test
     public void isEvaluatingParenthesisAlternativeFirstAndReturnsFalse() throws Exception {
         String text = "if((1 || 0 ) && 0 ){}";
         Program program = parse(text);
@@ -484,12 +512,102 @@ public class ExecutionTests {
         assertEquals("x should be literal 2", new MyInteger(2).getValue(), ((MyInteger)functionAssignment.execute(program.getScope(),null)).getValue());
     }
 
+    @Test
+    public void isSubstractingInts() throws Exception {
+        String text = "def Int x = 2 - 1;";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be literal 1", new MyInteger(1).getValue(), ((MyInteger)functionAssignment.execute(program.getScope(),null)).getValue());
+    }
+
+    @Test
+    public void isSubstractingDoubleFromInt() throws Exception {
+        String text = "def Int x = 2 - 1.0;";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be literal 1", new MyInteger(1).getValue(), ((MyInteger)functionAssignment.execute(program.getScope(),null)).getValue());
+    }
+
     @Test(expected = MyRunTimeException.class)
-    public void isThrowingExceptionWhenAddingDoubleToInt() throws Exception {
-        String text = "def Int x = 1 + 1.3;" +
+    public void isThrownigExceptionWhenSubstractingDoubleFromInt() throws Exception {
+        String text = "def Int x = 2 - 1.4;" +
                 "x;";
         Program program = parse(text);
         program.execute();
+    }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrownigExceptionWhenSubstractingStringFromInt() throws Exception {
+        String text = "def Int x = 2 - \"1\";" +
+                "x;";
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrownigExceptionWhenSubstractingStringFromDouble() throws Exception {
+        String text = "def Int x = 2.0 - \"1\";" +
+                "x;";
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrownigExceptionWhenMultiplyingIntByString() throws Exception {
+        String text = "def Int x = 2 * \"1\";" +
+                "x;";
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrownigExceptionWhenDividingIntByNaN() throws Exception {
+        String text = "def Int x = 2 / \"1\";" +
+                "x;";
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrownigExceptionWhenDividingDoubleByNaN() throws Exception {
+        String text = "def Double x = 2.0 / \"1\";" +
+                "x;";
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test
+    public void isDividingInts() throws Exception {
+        String text = "def Int x = 5 / 2 ;";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be literal 2", new MyInteger(2).getValue(), ((MyInteger)functionAssignment.execute(program.getScope(),null)).getValue());
+    }
+
+    @Test
+    public void isDividingIntByDouble() throws Exception {
+        String text = "def Int x = 5 / 2.5 ;";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be literal 2", new MyInteger(2).getValue(), ((MyInteger)functionAssignment.execute(program.getScope(),null)).getValue());
+    }
+
+    @Test
+    public void isSubstractingFromIntFromDouble() throws Exception {
+        String text = "def Int x = 2.4 - 1;";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be literal 1.4", new MyDouble(1.4).getValue(), ((MyDouble)functionAssignment.execute(program.getScope(),null)).getValue());
     }
 
     @Test
@@ -512,6 +630,18 @@ public class ExecutionTests {
         assertEquals("x should be literal 6", new MyInteger(6).getValue(), ((MyInteger)functionAssignment.execute(program.getScope(),null)).getValue());
     }
 
+    @Test
+    public void isContaingParameterWell() throws Exception {
+        String text = "def Int x(Int: a){ return 0;}";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Declaration", FunctionDeclaration.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionDeclaration functionDeclaration = (FunctionDeclaration) program.getStatement(0);
+        Parameter expectedParam = new Parameter(new MyType(false,TokenType.INT_TYPE),"a");
+        assertEquals("Should containg parameter a of type INT_TYPE", expectedParam.getType(), functionDeclaration.getParameters().get(0).getType());
+        assertEquals("Should containg parameter a", expectedParam.getName(), functionDeclaration.getParameters().get(0).getName());
+        assertEquals(expectedParam.getParameterType(), functionDeclaration.getParameters().get(0).getParameterType());
+    }
 
     private Program parse(String string) throws Exception {
         Lexer lexer = new Lexer(convertStringToInputStreamReader(string));

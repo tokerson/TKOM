@@ -19,11 +19,11 @@ public class Parameter{
         return type.getType();
     }
 
-    MyType getParameterType() {
+    public MyType getParameterType() {
         return type;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
