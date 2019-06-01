@@ -32,4 +32,12 @@ public class MyType {
         stringBuilder.append(type);
         return stringBuilder.toString();
     }
+
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof MyType){
+            return isArray() == ((MyType) o).isArray() && getType() == ((MyType) o).getType();
+        }
+        return false;
+    }
 }

@@ -1,30 +1,30 @@
 package model;
 
 import model.Token.TokenType;
+import program.MyRunTimeException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Array extends Node {
+public class Array extends Node implements Executable {
 
-    private TokenType type;
-    private List elements = new ArrayList();
+    private TokenType elementsType;
+    private List<Literal> elements = new ArrayList<Literal>();
 
     public Array(TokenType type) {
-        this.type = type;
+        this.elementsType = type;
     }
 
-    public void addElement(Node element) {
+    public void addElement(Literal element) {
         elements.add(element);
     }
 
-    public List getElements() {
+    public List<Literal> getElements() {
         return elements;
     }
 
-    @Override
-    public Type getType() {
-        return Type.Array;
+    public TokenType getElementsType(){
+        return elementsType;
     }
 
     @Override
@@ -40,5 +40,10 @@ public class Array extends Node {
         }
         stringBuilder.append("]");
         return stringBuilder.toString();
+    }
+
+    @Override
+    public Executable execute(Scope scope) throws MyRunTimeException {
+        return this;
     }
 }

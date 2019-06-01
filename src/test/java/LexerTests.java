@@ -122,12 +122,12 @@ public class LexerTests {
     }
 
     @Test
-    public void isReturningStringWithBackslashesInside() throws Exception {
-        String text = "\"hello \\world\\\"";
+    public void isReturningLessOrEqualsToken() throws Exception {
+        String text = "<=";
         Token token = getTokenFromString(text);
-        assertEquals("token's content should be \"hello \\world\\\"", "hello \\world\\", token.getContent());
-        assertEquals("token's type should be STRING", TokenType.STRING, token.getTokenType());
+        assertEquals("token's type should be LESS_EQUALS_OPERATOR", TokenType.LESS_EQUALS_OPERATOR, token.getTokenType());
     }
+
 
     @Test
     public void isReturningEndTokenWhenTheFileIsEmpty() throws Exception {

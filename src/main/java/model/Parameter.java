@@ -19,18 +19,19 @@ public class Parameter{
         return type.getType();
     }
 
+    public MyType getParameterType() {
+        return type;
+    }
+
     public String getName() {
         return name;
     }
 
     @Override
     public String toString(){
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(type);
-        stringBuilder.append(": ");
-        stringBuilder.append(name);
-
-        return stringBuilder.toString();
+        return type +
+                ": " +
+                name;
     }
 
 }
