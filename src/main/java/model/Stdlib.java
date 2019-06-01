@@ -4,7 +4,6 @@ import program.MyRunTimeException;
 
 import java.util.HashSet;
 import java.util.List;
-
 class Stdlib {
 
     static final HashSet<String> FUNCTIONS = new HashSet<String>() {{

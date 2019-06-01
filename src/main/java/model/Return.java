@@ -11,11 +11,6 @@ public class Return extends Node implements Executable{
     }
 
     @Override
-    public Type getType() {
-        return Type.Return;
-    }
-
-    @Override
     public String toString() {
         return "return " + returnStatement;
     }

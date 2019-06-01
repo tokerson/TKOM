@@ -59,10 +59,6 @@ public class FunctionAssignment extends Node implements Function {
         this.scope.setParentScope(scope);
     }
 
-    @Override
-    public Type getType() {
-        return Type.FunctionAssignment;
-    }
 
     @Override
     public String toString() {

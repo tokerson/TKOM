@@ -43,4 +43,7 @@ def []Double a = [1.2 , 3.0, 4.2];
 
 print(s(1,2) + "\n");
 
-print(a + "\n");
+print(a);
+print("\n");
+
+print( 1 + " he");

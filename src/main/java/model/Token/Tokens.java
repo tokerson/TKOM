@@ -20,7 +20,7 @@ public class Tokens {
         put("==", EQUALS_OPERATOR);
         put("!=", NOT_EQUALS_OPERATOR);
         put(">=", GREATER_EQUALS_OPERATOR);
-        put("=<", LESS_EQUALS_OPERATOR);
+        put("<=", LESS_EQUALS_OPERATOR);
         put("<", LESS_OPERATOR);
         put(">", GREATER_OPERATOR);
         put("&&", AND);

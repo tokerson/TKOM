@@ -16,11 +16,6 @@ public class MyDouble extends Literal<MyDouble, Double> {
     }
 
     @Override
-    public Type getType() {
-        return Type.Double;
-    }
-
-    @Override
     public String toString() {
         return String.valueOf(value);
     }

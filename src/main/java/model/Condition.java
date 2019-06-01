@@ -47,8 +47,4 @@ public class Condition extends Expression {
         return result;
     }
 
-    @Override
-    public Type getType() {
-        return Type.Condition;
-    }
 }

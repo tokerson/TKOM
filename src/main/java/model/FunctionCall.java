@@ -25,11 +25,6 @@ public class FunctionCall extends Node implements Executable {
     }
 
     @Override
-    public Type getType() {
-        return Type.FunctionCall;
-    }
-
-    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(name);

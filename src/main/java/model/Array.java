@@ -23,11 +23,6 @@ public class Array extends Node implements Executable {
         return elements;
     }
 
-    @Override
-    public Type getType() {
-        return Type.Array;
-    }
-
     public TokenType getElementsType(){
         return elementsType;
     }

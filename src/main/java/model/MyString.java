@@ -68,11 +68,6 @@ public class MyString extends Literal<MyString, String> {
     }
 
     @Override
-    public Type getType() {
-        return Type.String;
-    }
-
-    @Override
     public String toString() {
         return this.content;
     }

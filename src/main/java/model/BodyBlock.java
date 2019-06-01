@@ -27,11 +27,6 @@ public class BodyBlock extends Node implements Executable{
     }
 
     @Override
-    public Type getType() {
-        return Type.BodyBlock;
-    }
-
-    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("{\n");
 

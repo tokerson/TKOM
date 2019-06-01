@@ -66,11 +66,6 @@ public class FunctionDeclaration extends Node implements Function{
     }
 
     @Override
-    public Type getType() {
-        return Type.FunctionDeclaration;
-    }
-
-    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("def ");
         stringBuilder.append(returnType);

@@ -16,11 +16,6 @@ public class MyInteger extends Literal<MyInteger, Integer> {
     }
 
     @Override
-    public Type getType() {
-        return Type.Integer;
-    }
-
-    @Override
     public String toString() {
         return String.valueOf(value);
     }

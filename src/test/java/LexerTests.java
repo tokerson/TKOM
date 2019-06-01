@@ -121,6 +121,13 @@ public class LexerTests {
         assertEquals("token's type should be STRING", TokenType.STRING, token.getTokenType());
     }
 
+    @Test
+    public void isReturningLessOrEqualsToken() throws Exception {
+        String text = "<=";
+        Token token = getTokenFromString(text);
+        assertEquals("token's type should be LESS_EQUALS_OPERATOR", TokenType.LESS_EQUALS_OPERATOR, token.getTokenType());
+    }
+
 
     @Test
     public void isReturningEndTokenWhenTheFileIsEmpty() throws Exception {

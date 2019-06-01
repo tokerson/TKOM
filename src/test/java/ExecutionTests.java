@@ -1,6 +1,5 @@
 import lexer.Lexer;
-import model.IfStatement;
-import model.Node;
+import model.*;
 import parser.ParserException;
 import program.Program;
 import org.junit.Test;
@@ -8,7 +7,9 @@ import parser.Parser;
 import program.MyRunTimeException;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 import static org.junit.Assert.*;
 
@@ -30,6 +31,23 @@ public class ExecutionTests {
     }
 
     @Test(expected = MyRunTimeException.class)
+    public void isThrowingExceptionWhenExecutingHeadWithArgumentBeingNonList() throws Exception {
+        String text = "head(1);";
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test
+    public void headIsReturningFirstElementOfAnArray() throws Exception {
+        String text = "def Int x = head([1]);";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be literal 1", new MyInteger(1).getValue(), ((MyInteger)functionAssignment.execute(program.getScope(),null)).getValue());
+    }
+
+    @Test(expected = MyRunTimeException.class)
     public void isThrowingExceptionWhenExecutingTailWithNoArguments() throws Exception {
         String text = "tail();";
         Program program = parse(text);
@@ -43,11 +61,72 @@ public class ExecutionTests {
         program.execute();
     }
 
+    @Test(expected = MyRunTimeException.class)
+    public void isThrowingExceptionWhenExecutingTailWithArgumentBeingNonList() throws Exception {
+        String text = "tail(1);";
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrowingExceptionWhenExecutingLengthWithArgumentBeingNonList() throws Exception {
+        String text = "length(1);";
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrowingExceptionWhenExecutingLengthWithNoArguments() throws Exception {
+        String text = "length();";
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test
+    public void lengthIsReturningLengthOfAnArray() throws Exception {
+        String text = "def Int x = length([1]);";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be literal 1", new MyInteger(1).getValue(), ((MyInteger)functionAssignment.execute(program.getScope(),null)).getValue());
+    }
+
+    @Test
+    public void lengthIsReturning0WhenArrayIsEmpty() throws Exception {
+        String text = "def Int x = length([]);";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be literal 0", new MyInteger(0).getValue(), ((MyInteger)functionAssignment.execute(program.getScope(),null)).getValue());
+    }
+
+    @Test
+    public void tailIsReturningArrayWithoutFirstElement() throws Exception {
+        String text = "def Int x = tail([1,2,3,4]);";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be an array [2,3,4]", "[2,3,4]", ((Array)functionAssignment.execute(program.getScope(),null)).toString());
+    }
+
+    @Test
+    public void tailIsReturningEmptyArrayWhenGivenOneElementArray() throws Exception {
+        String text = "def Int x = tail([1]);";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be an empty array", 0, ((Array)functionAssignment.execute(program.getScope(),null)).getElements().size());
+    }
+
     @Test
     public void isEvaluatingIntegersGreaterThanZeroAsTrue() throws Exception {
         String text = "if( 1 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -56,7 +135,7 @@ public class ExecutionTests {
     public void isEvaluatingDoublesGreaterThanZeroAsTrue() throws Exception {
         String text = "if( 1.0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -65,7 +144,7 @@ public class ExecutionTests {
     public void isEvaluatingIntegersLessThanZeroAsFalse() throws Exception {
         String text = "if( -1 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement",IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", false, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -74,7 +153,7 @@ public class ExecutionTests {
     public void isEvaluatingDoublesLessThanZeroAsFalse() throws Exception {
         String text = "if( -1.0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", false, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -83,7 +162,7 @@ public class ExecutionTests {
     public void isEvaluatingZeroAsFalse() throws Exception {
         String text = "if( 0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", false, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -92,7 +171,7 @@ public class ExecutionTests {
     public void isEvaluatingEqualityForSameIntegersAsTrue() throws Exception {
         String text = "if( 1 == 1 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -101,7 +180,7 @@ public class ExecutionTests {
     public void isEvaluatingEqualityForSameDoublesAsTrue() throws Exception {
         String text = "if( 1.0 == 1.0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -110,7 +189,7 @@ public class ExecutionTests {
     public void isEvaluatingInEqualityForSameIntegersAsFalse() throws Exception {
         String text = "if( 1 != 1 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be false", false, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -119,7 +198,7 @@ public class ExecutionTests {
     public void isEvaluatingInEqualityForSameDoublesAsFalse() throws Exception {
         String text = "if( 1.0 != 1.0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be false", false, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -128,7 +207,7 @@ public class ExecutionTests {
     public void isEvaluatingInEqualityForDifferentDoublesAsTrue() throws Exception {
         String text = "if( 1.0 != 2.0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -137,7 +216,7 @@ public class ExecutionTests {
     public void isEvaluatingInEqualityForDifferentIntegersAsTrue() throws Exception {
         String text = "if( 1 != 2 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -146,7 +225,7 @@ public class ExecutionTests {
     public void isEvaluatingInEqualityForDifferentIntegerAndDoubleAsTrue() throws Exception {
         String text = "if( 1 != 2.0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -155,7 +234,7 @@ public class ExecutionTests {
     public void isEvaluatingInEqualityForSameIntegerAndDoubleAsFalse() throws Exception {
         String text = "if( 1 != 1.0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be false", false, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -164,7 +243,7 @@ public class ExecutionTests {
     public void isEvaluatingGreaterThanAsTrue() throws Exception {
         String text = "if( 1 > 0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -173,7 +252,7 @@ public class ExecutionTests {
     public void isEvaluatingGreaterEqualsThanAsTrue() throws Exception {
         String text = "if( 1 >= 0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -182,25 +261,25 @@ public class ExecutionTests {
     public void isEvaluatingLessThanAsTrue() throws Exception {
         String text = "if( -1 < 1 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
 
     @Test
     public void isEvaluatingLessEqualsThanAsTrue() throws Exception {
-        String text = "if( -1 =< 1 ){}";
+        String text = "if( -1 <= 1 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
 
     @Test
     public void isEvaluatingLessOrEqualsForSameIntsAsTrue() throws Exception {
-        String text = "if( -1 =< -1 ){}";
+        String text = "if( -1 <= -1 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Condition should be true", true, ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -209,7 +288,7 @@ public class ExecutionTests {
     public void isEvaluatingAndOfTwoTruesAsTrue() throws Exception {
         String text = "if( 1 && 1 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertTrue("Condition should be true", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -218,7 +297,7 @@ public class ExecutionTests {
     public void isEvaluatingAndOfTrueAndFalseAsFalse() throws Exception {
         String text = "if( 1 && 0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertFalse("Condition should be false", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -227,7 +306,7 @@ public class ExecutionTests {
     public void isEvaluatingAndOfTrueFalsesAsFalse() throws Exception {
         String text = "if( -1 && 0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertFalse("Condition should be false", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -236,7 +315,7 @@ public class ExecutionTests {
     public void isEvaluatingOrOfTrueAndFalseAsTrue() throws Exception {
         String text = "if( 1 || 0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertTrue("Condition should be true", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -245,7 +324,7 @@ public class ExecutionTests {
     public void isEvaluatingOrOfTwoTruesAsTrue() throws Exception {
         String text = "if( 1 || 1 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertTrue("Condition should be true", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -254,7 +333,7 @@ public class ExecutionTests {
     public void isEvaluatingOrOfTwoFalsesAsFalse() throws Exception {
         String text = "if( -1 || 0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertFalse("Condition should be false", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -263,7 +342,7 @@ public class ExecutionTests {
     public void isEvaluatingAlternativeOfTrueAndFalseAsTrue() throws Exception {
         String text = "if( 1 || 0 && 1 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertTrue("Condition should be true", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -272,7 +351,7 @@ public class ExecutionTests {
     public void isEvaluatingParenthesisAlternativeFirstAndReturnsTrue() throws Exception {
         String text = "if((1 || 0 ) && 1 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertTrue("Condition should be true", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -281,7 +360,7 @@ public class ExecutionTests {
     public void isEvaluatingParenthesisAlternativeFirstAndReturnsFalse() throws Exception {
         String text = "if((1 || 0 ) && 0 ){}";
         Program program = parse(text);
-        assertEquals("First statement should be If Statement", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be If Statement", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertFalse("Condition should be false", ifStatement.getCondition().execute(program.getScope()).isTrue());
     }
@@ -303,10 +382,135 @@ public class ExecutionTests {
         program.execute();
     }
 
+    @Test
+    public void testIfPrintsInteger() throws Exception {
+        String text = "print(1);"; //function call
+        Program program = parse(text);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        program.execute();
+        assertEquals("1", outContent.toString());
+    }
 
+    @Test
+    public void testIfPrintsDouble() throws Exception {
+        String text = "print(1.34);"; //function call
+        Program program = parse(text);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        program.execute();
+        assertEquals("1.34", outContent.toString());
+    }
 
+    @Test
+    public void testIfPrintsString() throws Exception {
+        String text = "print(\"1\");"; //function call
+        Program program = parse(text);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        program.execute();
+        assertEquals("1", outContent.toString());
+    }
 
+    @Test
+    public void testIfPrintsStringWithEscapeChars() throws Exception {
+        String text = "print(\"1\n\t\");"; //function call
+        Program program = parse(text);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        program.execute();
+        assertEquals("1\n\t", outContent.toString());
+    }
 
+    @Test
+    public void testIfPrintsConcatenatedNumbersAndString() throws Exception {
+        String text = "print(1 + \" is a relatively small number\");"; //function call
+        Program program = parse(text);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        program.execute();
+        assertEquals("1 is a relatively small number", outContent.toString());
+    }
+
+    @Test
+    public void testIfPrintsConcatenatedStringAndNumbers() throws Exception {
+        String text = "print(\"A relatively small number is \" + 1);"; //function call
+        Program program = parse(text);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        program.execute();
+        assertEquals("A relatively small number is 1", outContent.toString());
+    }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrowingExceptionWhenSubstractingFromString() throws Exception {
+        String text = "print(\"string\" -1 )"; //function call
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrowingExceptionWhenMultiplyingString() throws Exception {
+        String text = "print(\"string\"*1 )"; //function call
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrowingExceptionWhenDividingString() throws Exception {
+        String text = "print(\"string\"/1 )"; //function call
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test
+    public void isAddingInts() throws Exception {
+        String text = "def Int x = 1 + 1;";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be literal 2", new MyInteger(2).getValue(), ((MyInteger)functionAssignment.execute(program.getScope(),null)).getValue());
+    }
+
+    @Test
+    public void isAddingDoubleToIntWhenNoRemainer() throws Exception {
+        String text = "def Int x = 1 + 1.0;" +
+                "x;";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be literal 2", new MyInteger(2).getValue(), ((MyInteger)functionAssignment.execute(program.getScope(),null)).getValue());
+    }
+
+    @Test(expected = MyRunTimeException.class)
+    public void isThrowingExceptionWhenAddingDoubleToInt() throws Exception {
+        String text = "def Int x = 1 + 1.3;" +
+                "x;";
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test
+    public void isMultipyingInts() throws Exception {
+        String text = "def Int x = 2*3;";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be literal 6", new MyInteger(6).getValue(), ((MyInteger)functionAssignment.execute(program.getScope(),null)).getValue());
+    }
+
+    @Test
+    public void isMultipyingIntByDouble() throws Exception {
+        String text = "def Int x = 2*3.3;";
+        Program program = parse(text);
+        program.execute();
+        assertEquals("First statement should be Function Assignment", FunctionAssignment.class.getName(),program.getStatement(0).getClass().getName());
+        FunctionAssignment functionAssignment = (FunctionAssignment) program.getStatement(0);
+        assertEquals("x should be literal 6", new MyInteger(6).getValue(), ((MyInteger)functionAssignment.execute(program.getScope(),null)).getValue());
+    }
 
 
     private Program parse(String string) throws Exception {

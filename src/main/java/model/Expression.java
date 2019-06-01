@@ -20,10 +20,6 @@ public class Expression extends Node implements Executable {
         operands.add(operand);
     }
 
-    public Type getType() {
-        return Type.Expression;
-    }
-
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();

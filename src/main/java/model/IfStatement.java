@@ -44,11 +44,6 @@ public class IfStatement extends Node implements Executable {
     }
 
     @Override
-    public Type getType() {
-        return Type.IfStatement;
-    }
-
-    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("if (");
         stringBuilder.append(condition);

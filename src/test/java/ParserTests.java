@@ -21,84 +21,84 @@ public class ParserTests {
     public void isParsingSimpleFunctionAssignmentWithPositiveInteger() throws Exception {
         String text = "def Int x = 4;";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionAssignment.class,program.getStatement(0).getClass());
     }
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithAdditiveOperationOnIntegers() throws Exception {
         String text = "def Int x = 4 + 4;";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionAssignment.class,program.getStatement(0).getClass());
     }
 
     @Test
     public void isParsingSimpleFunctionAssignmentWhenAssignedToOtherFunctionCallWithArguments() throws Exception {
         String text = "def Int x = y(4);";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionAssignment.class,program.getStatement(0).getClass());
     }
 
     @Test
     public void isParsingSimpleFunctionAssignmentWhenAssignedToOtherFunctionCallWithoutArguments() throws Exception {
         String text = "def Int x = y;";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionAssignment.class,program.getStatement(0).getClass());
     }
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithAdditiveOperationOnDoubles() throws Exception {
         String text = "def Double x = 4.2 + 4.1;";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionAssignment.class,program.getStatement(0).getClass());
     }
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithMultiplicativeOperationOnIntegers() throws Exception {
         String text = "def Int x = 4 * 4;";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionAssignment.class,program.getStatement(0).getClass());
     }
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithMultiplicativeOperationOnDoubles() throws Exception {
         String text = "def Double x = 4.2 * 4.1;";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionAssignment.class,program.getStatement(0).getClass());
     }
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithNegativeInteger() throws Exception {
         String text = "def Int x = -4;";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionAssignment.class,program.getStatement(0).getClass());
     }
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithPositiveDouble() throws Exception {
         String text = "def Double x = 4.25;";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionAssignment.class,program.getStatement(0).getClass());
     }
 
     @Test
     public void isParsingSimpleFunctionAssignmentWithNegativeDouble() throws Exception {
         String text = "def Double x = -4.25;";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionAssignment.class,program.getStatement(0).getClass());
     }
 
     @Test
     public void isParsingFunctionAssignmentWithIntgerInsideParenthesis() throws Exception {
         String text = "def Int x = (4);";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionAssignment.class,program.getStatement(0).getClass());
     }
 
     @Test
     public void isParsingFunctionAssignmentWithParenthesis() throws Exception {
         String text = "def Int x = 2*(1+4);";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionAssignment.class,program.getStatement(0).getClass());
     }
 
     @Test(expected = ParserException.class)
@@ -120,7 +120,7 @@ public class ParserTests {
                 "return 4.2;" +
                 "}";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionDeclaration,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionDeclaration.class,program.getStatement(0).getClass());
     }
 
     @Test
@@ -129,7 +129,7 @@ public class ParserTests {
                 "return 4.2;" +
                 "}";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionDeclaration,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionDeclaration.class,program.getStatement(0).getClass());
         FunctionDeclaration functionDeclaration = (FunctionDeclaration) program.getStatement(0);
         assertEquals("First parameter should be", TokenType.INT_TYPE,functionDeclaration.getParameters().get(0).getType());
         assertEquals("Second parameter should be", TokenType.DOUBLE_TYPE,functionDeclaration.getParameters().get(1).getType());
@@ -141,7 +141,7 @@ public class ParserTests {
                 "return 4.2;" +
                 "}";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionDeclaration,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionDeclaration.class,program.getStatement(0).getClass());
         FunctionDeclaration functionDeclaration = (FunctionDeclaration) program.getStatement(0);
         assertEquals("First parameter should be", TokenType.INT_TYPE,functionDeclaration.getParameters().get(0).getType());
         assertEquals("First parameter should be", true,functionDeclaration.getParameters().get(0).isArray());
@@ -151,7 +151,7 @@ public class ParserTests {
     public void isParsingFunctionDeclarationThatHasReturnTypeofArray() throws Exception {
         String text = "def []Int x(){return 0;}";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionDeclaration,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionDeclaration.class,program.getStatement(0).getClass());
         FunctionDeclaration functionDeclaration = (FunctionDeclaration) program.getStatement(0);
         assertEquals("Return Type is Array",true,functionDeclaration.getReturnType().isArray());
         assertEquals("Return Type is Array of Type Int",TokenType.INT_TYPE,functionDeclaration.getReturnType().getType());
@@ -161,7 +161,7 @@ public class ParserTests {
     public void isParsingAFunctionAssignmentWhenAssigningToArray() throws Exception {
         String text = "def []Int x = [1, 2];";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.FunctionAssignment,program.getStatement(0).getType());
+        assertEquals("First statement should be", FunctionAssignment.class,program.getStatement(0).getClass());
         FunctionAssignment functionAssignment= (FunctionAssignment) program.getStatement(0);
         assertEquals("Return Type is Array",true,functionAssignment.getReturnType().isArray());
         assertEquals("Return Type is Array of Type Int",TokenType.INT_TYPE,functionAssignment.getReturnType().getType());
@@ -193,14 +193,14 @@ public class ParserTests {
     public void isParsingIfStatement() throws Exception {
         String text = "if(4 > 2){}";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be", IfStatement.class,program.getStatement(0).getClass());
     }
 
     @Test
     public void isParsingIfWithElseifStatement() throws Exception {
         String text = "if(4 > 2){}\nelsif( 2 > 3){}";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Elsif statement should be inside", 1,ifStatement.getElsifConditions().size());
     }
@@ -209,7 +209,7 @@ public class ParserTests {
     public void isParsingIfWith2ElseifStatements() throws Exception {
         String text = "if(4 > 2){}\nelsif( 2 > 3){}\nelsif(3 == 2){}";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertEquals("Elsif statement should be inside", 2,ifStatement.getElsifConditions().size());
     }
@@ -218,7 +218,7 @@ public class ParserTests {
     public void isParsingIfWithElseStatements() throws Exception {
         String text = "if(4 > 2){}\nelse{}";
         Program program = parse(text);
-        assertEquals("First statement should be", Node.Type.IfStatement,program.getStatement(0).getType());
+        assertEquals("First statement should be", IfStatement.class,program.getStatement(0).getClass());
         IfStatement ifStatement = (IfStatement) program.getStatement(0);
         assertNotNull("Elsif statement should be inside",ifStatement.getElseBlock());
     }
@@ -276,6 +276,48 @@ public class ParserTests {
     public void isThrowingAnExceptionWhenInitializingArrayWithDifferentTypes() throws Exception {
         String text = "def []Int array = [1,2,3.0];";
         Program program = parse(text);
+    }
+
+    @Test(expected = ParserException.class)
+    public void isThrowingExceptionWhenComparingEqualityString() throws Exception {
+        String text = "print(\"string\" == 1 )"; //function call
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test(expected = ParserException.class)
+    public void isThrowingExceptionWhenComparingInEqualityString() throws Exception {
+        String text = "print(\"string\" != 1 )"; //function call
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test(expected = ParserException.class)
+    public void isThrowingExceptionWhenComparingLessThanString() throws Exception {
+        String text = "print(\"string\" < 1 )"; //function call
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test(expected = ParserException.class)
+    public void isThrowingExceptionWhenComparingLessOrEqualsThanString() throws Exception {
+        String text = "print(\"string\" <= 1 )"; //function call
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test(expected = ParserException.class)
+    public void isThrowingExceptionWhenComparingGreaterThanString() throws Exception {
+        String text = "print(\"string\" > 1 )"; //function call
+        Program program = parse(text);
+        program.execute();
+    }
+
+    @Test(expected = ParserException.class)
+    public void isThrowingExceptionWhenComparingGreaterOrEqualsThanString() throws Exception {
+        String text = "print(\"string\" >= 1 )"; //function call
+        Program program = parse(text);
+        program.execute();
     }
 
 
