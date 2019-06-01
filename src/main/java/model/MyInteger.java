@@ -57,8 +57,14 @@ public class MyInteger extends Literal<MyInteger, Integer> {
     @Override
     public MyInteger divide(Literal second) throws MyRunTimeException {
         if(second instanceof MyInteger){
+            if(((MyInteger) second).getValue() == 0){
+                throw new MyRunTimeException("Cannot divide by zero.");
+            }
             return new MyInteger(value /((MyInteger) second).getValue());
         } else if (second instanceof MyDouble){
+            if(((MyDouble) second).getValue() == 0){
+                throw new MyRunTimeException("Cannot divide by zero.");
+            }
             return new MyInteger((int) (value / ((MyDouble) second).getValue()));
         } else throw new MyRunTimeException("Cannot divide integer by NaN");    }
 

@@ -56,7 +56,7 @@ public class FunctionCall extends Node implements Executable {
 
         evaluatedArguments = evaluateArguments(function, scope);
 
-        System.out.println("Executing function " + function.getName());
+//        System.out.println("Executing function " + function.getName());
         return function.execute(scope, evaluatedArguments);
     }
 
