@@ -11,27 +11,22 @@ public class Main {
         InputStreamReader inputStreamReader = null;
         try {
             inputStreamReader = new InputStreamReader(
-                    new FileInputStream( new File("src/main/resources/test.txt"))
+                    new FileInputStream( new File(args[0]))
             );
 
+            Lexer lexer = new Lexer(inputStreamReader);
+            Parser parser = new Parser(lexer);
+            Program program;
+            try {
+                program = parser.parse();
+                program.execute();
+
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Error Loading the file");
         }
-
-        Lexer lexer = new Lexer(inputStreamReader);
-        Parser parser = new Parser(lexer);
-        Program program;
-        try {
-            program = parser.parse();
-            program.execute();
-
-        } catch (ParserException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
     }
 }
