@@ -11,11 +11,11 @@ public class Main {
         InputStreamReader inputStreamReader = null;
         try {
             inputStreamReader = new InputStreamReader(
-                    new FileInputStream( new File("src/main/resources/test3.txt"))
+                    new FileInputStream( new File("src/main/resources/test.txt"))
             );
 
         } catch (FileNotFoundException e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
 
         Lexer lexer = new Lexer(inputStreamReader);

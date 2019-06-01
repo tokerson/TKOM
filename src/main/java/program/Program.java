@@ -37,8 +37,6 @@ public class Program {
             if(statement instanceof IfStatement){
                 ((IfStatement) statement).execute(this.getScope());
             }
-
-
         }
     }
 

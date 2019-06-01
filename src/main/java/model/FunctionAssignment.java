@@ -66,13 +66,11 @@ public class FunctionAssignment extends Node implements Function {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("def ");
-        stringBuilder.append(returnType);
-        stringBuilder.append(" ");
-        stringBuilder.append(identifier +" ");
-        stringBuilder.append(" = ");
-        stringBuilder.append(expression.toString());
-        return stringBuilder.toString();
+        return "def " + returnType +
+                " " +
+                identifier + " " +
+                " = " +
+                expression.toString();
     }
 
     @Override

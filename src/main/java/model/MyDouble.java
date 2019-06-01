@@ -15,10 +15,6 @@ public class MyDouble extends Literal<MyDouble, Double> {
         return value;
     }
 
-    public void setValue(double value) {
-        this.value = value;
-    }
-
     @Override
     public Type getType() {
         return Type.Double;

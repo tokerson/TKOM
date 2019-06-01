@@ -22,28 +22,12 @@ public class IfStatement extends Node implements Executable {
         this.condition = condition;
     }
 
-    public BodyBlock getThenBlock() {
-        return thenBlock;
-    }
-
     public void setThenBlock(BodyBlock thenBlock) {
         this.thenBlock = thenBlock;
     }
 
     public List<Condition> getElsifConditions() {
         return elsifConditions;
-    }
-
-    public void setElsifConditions(List<Condition> elsifConditions) {
-        this.elsifConditions = elsifConditions;
-    }
-
-    public List<BodyBlock> getElsifBodys() {
-        return elsifBodys;
-    }
-
-    public void setElsifBodys(List<BodyBlock> elsifBodys) {
-        this.elsifBodys = elsifBodys;
     }
 
     public BodyBlock getElseBlock() {

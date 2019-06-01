@@ -11,10 +11,6 @@ public class MyString extends Literal<MyString, String> {
         this.content = content;
     }
 
-    public String getContent() {
-        return content;
-    }
-
     @Override
     public String getValue() {
         return content;

@@ -15,10 +15,6 @@ public class MyInteger extends Literal<MyInteger, Integer> {
         return value;
     }
 
-    public void setValue(int value) {
-        this.value = value;
-    }
-
     @Override
     public Type getType() {
         return Type.Integer;

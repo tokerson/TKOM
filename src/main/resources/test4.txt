@@ -11,3 +11,10 @@ def Int x(){
 }
 
 print(4.0 +"1" + 2.0 + " tak sie stringi concatenuja " + 1 + "\n");
+
+def Int d(){
+    def Int x = 2;
+    return x;
+}
+
+print(d + "\n");

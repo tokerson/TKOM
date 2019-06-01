@@ -5,16 +5,16 @@ import program.MyRunTimeException;
 import java.util.HashSet;
 import java.util.List;
 
-public class Stdlib {
+class Stdlib {
 
-    public static final HashSet<String> FUNCTIONS = new HashSet<String>() {{
+    static final HashSet<String> FUNCTIONS = new HashSet<String>() {{
         add("print");
         add("head");
         add("tail");
         add("length");
     }};
 
-    public static FunctionCall print = new FunctionCall("print"){
+    static FunctionCall print = new FunctionCall("print"){
         @Override
         public Executable execute(Scope scope) throws MyRunTimeException {
             System.out.print(this.getArguments().get(0).execute(scope));
@@ -22,7 +22,7 @@ public class Stdlib {
         }
     };
 
-    public static FunctionCall head = new FunctionCall("head"){
+    static FunctionCall head = new FunctionCall("head"){
         @Override
         public Literal execute(Scope scope) throws MyRunTimeException {
             if(this.getArguments().size() > 0){
@@ -38,7 +38,7 @@ public class Stdlib {
         }
     };
 
-    public static FunctionCall tail = new FunctionCall("tail"){
+    static FunctionCall tail = new FunctionCall("tail"){
         @Override
         public Array execute(Scope scope) throws MyRunTimeException {
             if(this.getArguments().size() > 0){
@@ -58,7 +58,7 @@ public class Stdlib {
         }
     };
 
-    public static FunctionCall length = new FunctionCall("length"){
+    static FunctionCall length = new FunctionCall("length"){
         @Override
         public Literal execute(Scope scope) throws MyRunTimeException {
             if(this.getArguments().size() > 0){

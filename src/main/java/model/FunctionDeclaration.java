@@ -26,17 +26,13 @@ public class FunctionDeclaration extends Node implements Function{
         return parameters;
     }
 
-    public Parameter getParameter(String identifier){
+    private Parameter getParameter(String identifier){
         for (Parameter parameter : parameters){
             if (parameter.getName().equals(identifier)){
                 return parameter;
             }
         }
         return null;
-    }
-
-    public boolean addToScope(Function function){
-        return this.bodyBlock.getScope().addFunction(function);
     }
 
     @Override
@@ -46,25 +42,11 @@ public class FunctionDeclaration extends Node implements Function{
             bodyBlock.getScope().addFunction(function);
         }
 
-        Executable evalutedValue = bodyBlock.execute(bodyBlock.getScope());
-
-
-
-//        if( evalutedValue instanceof Literal)
-        return evalutedValue;
-    }
-
-    public void checkReturnedType(){
-
+        return bodyBlock.execute(bodyBlock.getScope());
     }
 
     public void setParameters(List<Parameter> parameters) {
         this.parameters = parameters;
-    }
-
-    public void setBodyBlock(BodyBlock bodyBlock) {
-        this.bodyBlock = bodyBlock;
-        this.bodyBlock.setScope(bodyBlock.getScope());
     }
 
     public BodyBlock getBodyBlock() {

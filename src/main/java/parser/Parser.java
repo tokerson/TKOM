@@ -57,6 +57,7 @@ public class Parser {
     private Node parseFunctionDeclaration(Scope scope) throws Exception {
         FunctionDeclaration functionDeclaration;
         MyType type = parseReturnedType();
+        Token startToken = token;
 
         String identifier = token.getContent();
         accept(TokenType.IDENTIFIER);
@@ -68,13 +69,13 @@ public class Parser {
                 functionDeclaration.setParameters(parseFunctionParameters(functionDeclaration.getScope()));
                 parseFunctionBody(functionDeclaration.getBodyBlock(), type);
                 functionDeclaration.setParentScope(scope);
-                if(!scope.addFunction(functionDeclaration)) throw new ParserException(token, "Redeclaration of function " + functionDeclaration.getName() + " within the same scope.");
+                if(!scope.addFunction(functionDeclaration)) throw new ParserException(startToken, "Redeclaration of function " + functionDeclaration.getName() + " within the same scope.");
                 return functionDeclaration;
             case ASSIGN_OPERATOR:
                 accept(TokenType.ASSIGN_OPERATOR);
                 FunctionAssignment functionAssignment = parseFunctionAssignment(identifier, type);
                 functionAssignment.setParentScope(scope);
-                if(!scope.addFunction(functionAssignment)) throw new ParserException(token, "Redeclaration of function " + functionAssignment.getName() + " within the same scope.");
+                if(!scope.addFunction(functionAssignment)) throw new ParserException(startToken, "Redeclaration of function " + functionAssignment.getName() + " within the same scope.");
                 return functionAssignment;
             default:
                 throw new ParserException(token, new TokenType[]{TokenType.ASSIGN_OPERATOR, TokenType.PARENTHESIS_OPEN});

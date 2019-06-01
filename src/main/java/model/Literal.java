@@ -4,7 +4,7 @@ import program.MyRunTimeException;
 
 public abstract class Literal<T,VT> extends Node implements Executable {
 
-    protected boolean isTrue = false;
+    boolean isTrue = false;
 
     public abstract VT getValue();
 
@@ -16,7 +16,7 @@ public abstract class Literal<T,VT> extends Node implements Executable {
 
     public abstract T divide(final Literal second) throws MyRunTimeException;
 
-    public void setTrue(boolean isTrue){
+    void setTrue(boolean isTrue){
         this.isTrue = isTrue;
     }
 
@@ -24,12 +24,12 @@ public abstract class Literal<T,VT> extends Node implements Executable {
         return isTrue;
     }
 
-    public T or(final Literal second){
+    T or(final Literal second){
         this.isTrue = this.isTrue || second.isTrue();
         return (T) this;
     }
 
-    public T and(final Literal second){
+    T and(final Literal second){
         this.isTrue = this.isTrue && second.isTrue();
         return (T) this;
     }

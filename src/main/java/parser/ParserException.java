@@ -20,9 +20,6 @@ public class ParserException extends Exception{
         this.expected = null;
     }
 
-
-
-
     @Override
     public String getMessage(){
         StringBuilder   stringBuilder = new StringBuilder("Error at line: ");
@@ -31,12 +28,14 @@ public class ParserException extends Exception{
         stringBuilder.append(token.getTextPosition().getCharacterNumber());
 
         if (message != null) {
-            stringBuilder.append(message);
+            stringBuilder.append("\n").append(message);
         } else {
             stringBuilder.append("\nExpected ");
-            for (TokenType type: expected) {
-                stringBuilder.append(type);
-                stringBuilder.append(", ");
+            if (expected != null) {
+                for (TokenType type: expected) {
+                    stringBuilder.append(type);
+                    stringBuilder.append(", ");
+                }
             }
             stringBuilder.append("but found ");
             stringBuilder.append(token.getTokenType());
