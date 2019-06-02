@@ -1,0 +1,49 @@
+//this is a comment
+
+//def Int x([]Int:y);
+//def Int x(Int[]:y);
+
+print(2 + 4 * 4 / 2);
+print("\n");
+
+//print(x(4));
+
+def Int x = 2 + 4 * 4 / 2;
+print(x);
+print("\n");
+def Int y = -2;
+
+if( 4 * 2 / 2 + 1 > 3 && 1 > 2 || 1) {
+    print("True\n");
+    def Int x = 2;
+    if( 1 ) {
+        def Int y = 1;
+        def Int x = 2;
+    }
+} else {
+    print("False\n");
+}
+
+def Int s(Int: a, Double: b){
+    def Int x = 4 + 1 * 3;
+    def Int y = x;
+    def Int s = x(y + 4);
+
+    if(  3 > 3 ) {
+    }
+
+    return 4+5;
+};
+
+def Int z([]Int: a){
+    return 4;
+}
+
+def []Double a = [1.2 , 3.0, 4.2];
+
+print(s(1,2) + "\n");
+
+print(a);
+print("\n");
+
+print( 1 + " he");

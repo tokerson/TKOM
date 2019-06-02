@@ -1,0 +1,20 @@
+def Int x(){
+    if( 2 > 1  ) {
+        def Int c = 2;
+        if( 2 >1 ){
+            def Int d = 4;
+            return d;
+        }
+        return c;
+    }
+    return 3;
+}
+
+print(4.0 +"1" + 2.0 + " tak sie stringi concatenuja " + 1 + "\n");
+
+def Int d(){
+    def Int x = 2 / 0;
+    return x;
+}
+
+print(d + "\n");
